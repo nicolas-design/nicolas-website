@@ -1,43 +1,57 @@
-import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Mail, Phone, MapPin, Send } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useToast } from '@/hooks/use-toast'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { insertContactMessageSchema } from '@shared/schema'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import type { InsertContactMessage } from '@shared/schema'
 
 export default function ContactSection() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
+  
+  const form = useForm<InsertContactMessage>({
+    resolver: zodResolver(insertContactMessageSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      message: ''
+    }
+  })
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    
-    // TODO: remove mock functionality - integrate with real backend
-    console.log('Form submitted:', formData)
-    
-    // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: "Nachricht gesendet!",
-        description: "Vielen Dank für Ihre Nachricht. Ich melde mich bald bei Ihnen.",
+  const handleSubmit = async (data: InsertContactMessage) => {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
       })
-      setFormData({ name: '', email: '', message: '' })
-      setIsSubmitting(false)
-    }, 1000)
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        toast({
+          title: "Nachricht gesendet! 🎉",
+          description: "Vielen Dank für Ihre Nachricht. Ich melde mich bald bei Ihnen!",
+        })
+        form.reset()
+      } else {
+        throw new Error(result.error || 'Unbekannter Fehler')
+      }
+    } catch (error) {
+      console.error('Contact form error:', error)
+      toast({
+        title: "Fehler beim Senden 😔",
+        description: error instanceof Error ? error.message : "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
+        variant: "destructive",
+      })
+    }
   }
 
   const contactInfo = [
@@ -125,64 +139,81 @@ export default function ContactSection() {
                 <CardTitle>Nachricht senden</CardTitle>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      id="name"
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+                    <FormField
+                      control={form.control}
                       name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="Ihr vollständiger Name"
-                      data-testid="input-name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Ihr vollständiger Name"
+                              data-testid="input-name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="email">E-Mail</Label>
-                    <Input
-                      id="email"
+                    
+                    <FormField
+                      control={form.control}
                       name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="ihre.email@example.com"
-                      data-testid="input-email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>E-Mail</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="ihre.email@example.com"
+                              data-testid="input-email"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="message">Nachricht</Label>
-                    <Textarea
-                      id="message"
+                    
+                    <FormField
+                      control={form.control}
                       name="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="Beschreiben Sie Ihr Projekt oder Ihre Anfrage..."
-                      className="min-h-32"
-                      data-testid="input-message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nachricht</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Beschreiben Sie Ihr Projekt oder Ihre Anfrage..."
+                              className="min-h-32"
+                              data-testid="input-message"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full"
-                    disabled={isSubmitting}
-                    data-testid="button-submit"
-                  >
-                    {isSubmitting ? (
-                      'Wird gesendet...'
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4 mr-2" />
-                        Nachricht senden
-                      </>
-                    )}
-                  </Button>
-                </form>
+                    
+                    <Button 
+                      type="submit" 
+                      className="w-full"
+                      disabled={form.formState.isSubmitting}
+                      data-testid="button-submit"
+                    >
+                      {form.formState.isSubmitting ? (
+                        'Wird gesendet...'
+                      ) : (
+                        <>
+                          <Send className="h-4 w-4 mr-2" />
+                          Nachricht senden
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </Form>
               </CardContent>
             </Card>
           </motion.div>
