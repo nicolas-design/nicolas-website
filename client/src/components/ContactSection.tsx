@@ -70,13 +70,47 @@ export default function ContactSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4" data-testid="contact-title">
-            Kontakt
-          </h2>
-          <p className="text-xl text-muted-foreground text-center mb-16 max-w-3xl mx-auto" data-testid="contact-subtitle">
-            Bereit für Ihr nächstes Projekt? Lassen Sie uns über Ihre Ideen sprechen 
-            und gemeinsam eine maßgeschneiderte Lösung entwickeln.
-          </p>
+          <motion.h2 
+            className="text-4xl md:text-5xl font-bold text-center mb-6"
+            initial={{ opacity: 0, scale: 0.5 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: "backOut" }}
+            data-testid="contact-title"
+          >
+            <span className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              Lass uns quatschen!
+            </span>
+            <motion.span 
+              className="inline-block ml-2"
+              animate={{ 
+                rotate: [0, 20, -20, 0],
+                scale: [1, 1.2, 1]
+              }}
+              transition={{ 
+                duration: 3, 
+                repeat: Infinity, 
+                ease: "easeInOut" 
+              }}
+            >
+              💬
+            </motion.span>
+          </motion.h2>
+          <motion.p 
+            className="text-xl text-muted-foreground text-center mb-16 max-w-4xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            data-testid="contact-subtitle"
+          >
+            Hast du eine{' '}
+            <span className="text-primary font-semibold">verrückte Idee</span>? 
+            Brauchst du Hilfe bei einem Projekt? Oder willst du einfach nur{' '}
+            <span className="text-purple-500 font-semibold">über Code philosophieren</span>? 
+            <br />
+            Ich freue mich auf deine Nachricht! ✨🚀
+          </motion.p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-12">
