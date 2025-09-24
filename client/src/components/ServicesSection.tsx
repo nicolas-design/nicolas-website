@@ -69,17 +69,25 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
             und echter Verantwortung für Ergebnis & Qualität.
           </p>
 
-          {/* Value badges */}
+          {/* Value badges (improved dark contrast) */}
           <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
-            <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
+            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ring-1
+                              bg-emerald-50 text-emerald-700 ring-emerald-200
+                              dark:bg-emerald-400/15 dark:text-emerald-200 dark:ring-emerald-400/30">
               <PiggyBank className="h-4 w-4" />
               Budget-freundlicher Einstieg{STARTING_PRICE ? ` (${STARTING_PRICE})` : ''}
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20">
+
+            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ring-1
+                              bg-primary/10 text-primary ring-primary/20
+                              dark:bg-primary/20 dark:text-primary dark:ring-primary/25">
               <ShieldCheck className="h-4 w-4" />
               100 % Geld-zurück-Garantie
             </span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent ring-1 ring-accent/20">
+
+            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ring-1
+                              bg-accent/10 text-accent ring-accent/20
+                              dark:bg-accent/20 dark:text-accent dark:ring-accent/25">
               <RotateCcw className="h-4 w-4" />
               Launch in ~3 Wochen
             </span>
@@ -98,7 +106,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
             >
               <Card className="h-full hover-elevate bg-card">
                 <CardContent className="p-8">
-                  <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
+                  <div className="w-14 h-14 rounded-lg flex items-center justify-center mb-6 bg-primary/10 dark:bg-primary/15">
                     <service.icon className="h-7 w-7 text-primary" />
                   </div>
 
@@ -138,12 +146,16 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
         >
           <div className="rounded-xl border bg-card p-6 shadow-sm">
             <div className="flex items-start gap-4">
-              <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 ring-1 ring-emerald-200">
-                <ShieldCheck className="h-5 w-5 text-emerald-600" />
+              <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-lg
+                              bg-emerald-50 ring-1 ring-emerald-200
+                              dark:bg-emerald-400/10 dark:ring-emerald-400/20">
+                <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-300" />
               </div>
               <div>
-                <h3 className="text-lg font-semibold">100 % Geld-zurück-Garantie</h3>
-                <p className="text-sm text-slate-600 mt-1">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+        100 % Geld-zurück-Garantie
+      </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
                   Wenn Sie innerhalb von <span className="font-medium">30 Tagen nach Launch</span> nicht zufrieden sind,
                   erhalten Sie Ihr Geld zurück. Ohne Wenn und Aber. Null Risiko, maximaler Nutzen.
                 </p>
@@ -161,7 +173,9 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <div className="bg-card p-8 rounded-lg border max-w-2xl mx-auto">
-            <h3 className="text-xl font-semibold mb-2">Starter-Paket für den schnellen Markteintritt</h3>
+          <h3 className="text-xl font-semibold mb-2 text-foreground dark:text-white">
+  Starter-Paket für den schnellen Markteintritt
+</h3>
             <p className="text-muted-foreground mb-5">
               Ideal zum Loslegen: 1–3 Seiten, individuelles Design, SEO-Basics, Tracking, Launch in 2–3 Wochen.
               {STARTING_PRICE ? <> <span className="font-semibold text-foreground">Ab {STARTING_PRICE}</span>.</> : null}

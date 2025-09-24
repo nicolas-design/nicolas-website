@@ -19,8 +19,9 @@
     <link rel="manifest" href="/site.webmanifest" />
 
     <!-- PWA / UI colors -->
-    <meta name="theme-color" content="#0f172a" />
-    <meta name="color-scheme" content="light only" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#0f172a" />
+    <meta name="color-scheme" content="light dark" />
 
     <!-- Open Graph / Twitter -->
     <meta property="og:title" content="Nicolas Gadner – Web & App Entwicklung" />
@@ -40,6 +41,16 @@
           href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 
     <!-- If you use Tailwind, make sure your main.tsx imports the CSS -->
+    <script>
+      (() => {
+        try {
+          const saved = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const isDark = saved ? saved === 'dark' : prefersDark;
+          document.documentElement.classList.toggle('dark', isDark);
+        } catch {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

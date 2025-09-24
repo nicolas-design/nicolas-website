@@ -13,7 +13,8 @@ export default function AboutSection() {
     {
       icon: GraduationCap,
       title: 'B.Sc. Software Engineering & Digital Business',
-      description: 'Fundierte Grundlage in moderner Softwareentwicklung & digitalen Geschäftsmodellen (Leistungsstipendium).',
+      description:
+        'Fundierte Grundlage in moderner Softwareentwicklung & digitalen Geschäftsmodellen (Leistungsstipendium).',
       color: 'from-primary to-accent',
     },
     {
@@ -48,6 +49,7 @@ export default function AboutSection() {
     { name: 'Next.js', level: 85 },
     { name: 'Angular', level: 75 },
     { name: 'Flutter', level: 72 },
+    { name: 'Dart', level: 89 },
     { name: 'Node.js', level: 82 },
     { name: 'Firebase', level: 76 },
     { name: 'PostgreSQL', level: 74 },
@@ -56,9 +58,16 @@ export default function AboutSection() {
   ]
 
   return (
-    <section id="about" className="relative py-24 bg-brand-100 dark:bg-background">
-      {/* soft background accents */}
-      <div className="pointer-events-none absolute inset-0 opacity-20 dark:opacity-10" aria-hidden>
+    <section
+      id="about"
+      className="
+        relative py-24
+        bg-brand-100
+       dark:bg-background 
+      "
+    >
+      {/* blobs */}
+      <div className="pointer-events-none absolute inset-0 opacity-20 dark:opacity-15" aria-hidden>
         <div className="absolute top-16 left-8 h-32 w-32 rounded-full bg-primary/30 blur-3xl" />
         <div className="absolute bottom-16 right-8 h-40 w-40 rounded-full bg-accent/25 blur-3xl" />
         <div className="absolute top-1/2 left-1/3 h-24 w-24 rounded-full bg-primary/20 blur-3xl" />
@@ -78,8 +87,7 @@ export default function AboutSection() {
           </h2>
 
           <div className="mx-auto mb-6 flex flex-col items-center">
-            <div className="h-28 w-28 overflow-hidden rounded-full ring-2 ring-primary/20 shadow-sm">
-              {/* put your image in /public/case/cto.jpg or adjust path */}
+            <div className="h-28 w-28 overflow-hidden rounded-full ring-2 ring-primary/20 dark:ring-white/15 shadow-sm">
               <img
                 src="/case/cto.jpg"
                 alt="Nicolas Gadner – Portrait"
@@ -107,7 +115,7 @@ export default function AboutSection() {
               onMouseEnter={() => setHoveredCard(i)}
               onMouseLeave={() => setHoveredCard(null)}
             >
-              <Card className="group relative h-full cursor-default overflow-hidden">
+              <Card className="group relative h-full cursor-default overflow-hidden bg-card border border-border">
                 <motion.div
                   className={`absolute inset-0 bg-gradient-to-br ${a.color} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
                   animate={hoveredCard === i ? { scale: 1.04 } : { scale: 1 }}
@@ -127,7 +135,7 @@ export default function AboutSection() {
           ))}
         </div>
 
-        {/* Values */}
+        {/* Values (Werte) – improved dark contrast */}
         <motion.div
           className="mb-12 text-center"
           initial={{ opacity: 0, y: 30 }}
@@ -140,7 +148,13 @@ export default function AboutSection() {
             {passions.map((p, i) => (
               <motion.div
                 key={p.text}
-                className="flex items-center gap-3 rounded-full border bg-card/70 px-5 py-2.5 backdrop-blur-sm"
+                className="
+                  flex items-center gap-3 rounded-full
+                  border ring-1 ring-muted-border
+                  bg-card/70 px-5 py-2.5 backdrop-blur-sm
+                  text-foreground
+                  dark:bg-white/10 dark:ring-white/15 dark:text-foreground
+                "
                 whileHover={{ y: -2 }}
                 initial={{ opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}

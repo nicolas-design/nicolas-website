@@ -39,22 +39,62 @@ const PROJECTS: Project[] = [
 
 export default function ProjectsSection() {
   return (
-    <section id="work" className="relative overflow-hidden bg-gradient-to-b from-white to-slate-50 py-20">
-      {/* soft background accents */}
+    <section
+      id="projects"
+      className="
+        relative overflow-hidden py-20
+        /* light */
+        bg-gradient-to-b from-white to-brand-50
+        /* dark: slightly lighter than global bg for contrast */
+        dark:from-[hsl(222_15%_14%)] dark:to-[hsl(222_15%_12%)]
+      "
+    >
+      {/* Blobs / Farbflecken */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl opacity-50" />
-        <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-accent/10 blur-3xl opacity-50" />
+        {/* oben rechts – Primary */}
+        <div
+          className="
+            absolute -top-24 -right-24 h-72 w-72 rounded-full
+            bg-primary/20 blur-3xl opacity-60
+            dark:bg-primary/35 dark:opacity-30
+          "
+        />
+        {/* unten links – Accent */}
+        <div
+          className="
+            absolute -bottom-24 -left-24 h-72 w-72 rounded-full
+            bg-accent/20 blur-3xl opacity-60
+            dark:bg-accent/35 dark:opacity-30
+          "
+        />
+        {/* zarter Schimmer in der Mitte */}
+        <div
+          className="
+            absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2
+            h-40 w-40 rounded-full
+            bg-primary/10 blur-3xl opacity-50
+            dark:bg-primary/20 dark:opacity-25
+          "
+        />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
-        {/* Section header */}
+        {/* Header */}
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20">
+          <span
+            className="
+              inline-flex items-center gap-2 rounded-full
+              bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20
+              dark:bg-primary/20 dark:text-primary dark:ring-primary/30
+            "
+          >
             Ausgewählte Projekte
           </span>
-          <h2 className="mt-4 text-3xl md:text-5xl font-semibold tracking-tight text-slate-900">
+
+          <h2 className="mt-4 text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
             <span className="text-primary">Ergebnisse</span>, die überzeugen
           </h2>
+
           <p className="text-lg mt-3 md:text-xl leading-relaxed text-muted-foreground mb-6 max-w-3xl mx-auto">
             Maßgeschneiderte Websites & Webapps – Performance, SEO und Conversion von Anfang an gedacht.
           </p>
@@ -65,7 +105,11 @@ export default function ProjectsSection() {
           {PROJECTS.map((p) => (
             <article
               key={p.id}
-              className="group overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md"
+              className="
+                group overflow-hidden rounded-3xl border bg-card shadow-sm transition
+                hover:shadow-md hover:border-primary/30
+                border-border
+              "
             >
               <a href={p.href} target="_blank" rel="noreferrer" aria-label={`${p.title} öffnen`}>
                 <div className="relative">
@@ -76,8 +120,15 @@ export default function ProjectsSection() {
                     loading="lazy"
                     decoding="async"
                   />
-                  {/* subtle top-right badge */}
-                  <div className="pointer-events-none absolute top-4 right-4 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200">
+                  {/* Badge oben rechts */}
+                  <div
+                    className="
+                      pointer-events-none absolute top-4 right-4 rounded-full
+                      px-3 py-1 text-xs font-medium ring-1
+                      bg-white/90 text-slate-700 ring-slate-200
+                      dark:bg-white/10 dark:text-foreground/90 dark:ring-white/15
+                    "
+                  >
                     {p.subtitle}
                   </div>
                 </div>
@@ -85,9 +136,9 @@ export default function ProjectsSection() {
 
               <div className="p-5">
                 <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-xl font-semibold text-slate-900">{p.title}</h3>
+                  <h3 className="text-xl font-semibold text-foreground">{p.title}</h3>
                   <svg
-                    className="h-4 w-4 text-slate-400 transition group-hover:text-primary"
+                    className="h-4 w-4 text-muted-foreground transition group-hover:text-primary"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                     aria-hidden
@@ -100,16 +151,19 @@ export default function ProjectsSection() {
                   </svg>
                 </div>
 
-                <p className="mt-1 text-sm leading-relaxed text-slate-600">{p.description}</p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{p.description}</p>
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   {p.chips.map((c) => (
                     <span
                       key={c}
-                      className="inline-flex items-center rounded-full bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200"
-                    >
-                      {c}
-                    </span>
+                      className="
+                        inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium
+                        bg-muted text-muted-foreground ring-1 ring-muted-border
+                        dark:bg-white/5 dark:text-foreground/80 dark:ring-white/10
+                      "
+                      dangerouslySetInnerHTML={{ __html: c }}
+                    />
                   ))}
                 </div>
 
@@ -135,7 +189,7 @@ export default function ProjectsSection() {
           ))}
         </div>
 
-        <p className="mx-auto mt-8 max-w-3xl text-center text-xs text-slate-500">
+        <p className="mx-auto mt-8 max-w-3xl text-center text-xs text-muted-foreground">
           Mehr Beispiele gern auf Anfrage – ich zeige Ihnen passende Cases für Ihre Branche.
         </p>
       </div>

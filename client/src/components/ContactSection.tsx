@@ -52,13 +52,13 @@ export default function ContactSection() {
   }
 
   const contactInfo = [
-    { icon: Mail, title: 'E-Mail',   value: 'deine.mail@domain.com', link: 'mailto:deine.mail@domain.com' },
-    { icon: Phone, title: 'Telefon', value: '+43 660 0000000',       link: 'tel:+436600000000' },
-    { icon: MapPin, title: 'Standort', value: 'Tirol, Österreich',   link: null },
+    { icon: Mail,   title: 'E-Mail',     value: 'deine.mail@domain.com', link: 'mailto:deine.mail@domain.com' },
+    { icon: Phone,  title: 'Telefon',    value: '+43 660 0000000',       link: 'tel:+436600000000' },
+    { icon: MapPin, title: 'Standort',   value: 'Tirol, Österreich',     link: null },
   ] as const
 
   return (
-    <section id="contact" className="py-24 bg-white dark:bg-background border-t">
+    <section id="contact" className="py-24 bg-white  dark:bg-[hsl(222_15%_12%)] dark:to-[hsl(222_15%_11%)] border-t">
       <div className="mx-auto max-w-6xl px-6">
         {/* Header */}
         <motion.div
@@ -87,7 +87,7 @@ export default function ContactSection() {
           >
             <Card className="bg-card">
               <CardHeader>
-                <CardTitle>Nachricht senden</CardTitle>
+                <CardTitle className="text-foreground">Nachricht senden</CardTitle>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
@@ -97,7 +97,7 @@ export default function ContactSection() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Name</FormLabel>
+                          <FormLabel className="text-foreground">Name</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Ihr vollständiger Name"
@@ -116,7 +116,7 @@ export default function ContactSection() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>E-Mail</FormLabel>
+                          <FormLabel className="text-foreground">E-Mail</FormLabel>
                           <FormControl>
                             <Input
                               type="email"
@@ -137,7 +137,7 @@ export default function ContactSection() {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nachricht</FormLabel>
+                          <FormLabel className="text-foreground">Nachricht</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Kurze Projektbeschreibung, Ziele, Timing …"
@@ -177,7 +177,7 @@ export default function ContactSection() {
             </Card>
           </motion.div>
 
-          {/* Kontaktinfos */}
+          {/* Kontaktinfos (Dark Mode kontrastreicher) */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -186,19 +186,27 @@ export default function ContactSection() {
           >
             <div className="space-y-8">
               <div>
-                <h3 className="text-xl font-semibold mb-6">Kontaktinformationen</h3>
+                <h3 className="text-xl font-semibold mb-6 text-foreground">Kontaktinformationen</h3>
                 <div className="space-y-4">
                   {contactInfo.map((info, i) => (
                     <div key={i} className="flex items-center gap-4">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                      <div className="
+                        flex h-10 w-10 items-center justify-center rounded-lg
+                        bg-primary/10 ring-1 ring-primary/20
+                        dark:bg-white/10 dark:ring-white/15
+                      ">
                         <info.icon className="h-5 w-5 text-primary" />
                       </div>
                       <div>
-                        <p className="font-medium">{info.title}</p>
+                        <p className="font-medium text-foreground">{info.title}</p>
                         {info.link ? (
                           <a
                             href={info.link}
-                            className="text-muted-foreground hover:text-primary transition-colors"
+                            className="
+                              transition-colors
+                              text-foreground/80 hover:text-primary
+                              dark:text-foreground hover:dark:text-primary
+                            "
                           >
                             {info.value}
                           </a>
@@ -213,7 +221,7 @@ export default function ContactSection() {
 
               <Card className="bg-card">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold mb-3">Antwortzeit</h4>
+                  <h4 className="font-semibold mb-3 text-foreground">Antwortzeit</h4>
                   <p className="text-sm text-muted-foreground mb-4">
                     In der Regel innerhalb von 24 Stunden. Bei dringenden Projekten schneller.
                   </p>
