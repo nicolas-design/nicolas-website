@@ -20,8 +20,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Router />
+        {/* Site-wide wrapper */}
+        <div className="min-h-dvh bg-slate-50 text-slate-900 font-sans antialiased">
+          <Toaster />
+          <Router />
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   );

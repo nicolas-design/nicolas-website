@@ -1,126 +1,173 @@
+// client/src/components/ServicesSection.tsx
+'use client'
+
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Globe, Smartphone, Settings, CheckCircle } from 'lucide-react'
+import {
+  Globe,
+  Smartphone,
+  Settings,
+  CheckCircle,
+  ShieldCheck,
+  PiggyBank,
+  RotateCcw,
+  ArrowRight,
+} from 'lucide-react'
 import { motion } from 'framer-motion'
 
 interface ServicesSectionProps {
   onContactClick: () => void
 }
 
+const STARTING_PRICE = '€ 590'
+
 export default function ServicesSection({ onContactClick }: ServicesSectionProps) {
   const services = [
     {
       icon: Globe,
-      title: 'Webentwicklung',
-      description: 'Moderne, responsive Websites und Webanwendungen',
-      features: [
-        'React & Next.js Entwicklung',
-        'Responsive Design',
-        'SEO-Optimierung',
-        'Performance-Optimierung'
-      ]
+      title: 'Webseiten & Landings',
+      description: 'Moderne, responsive Sites, die Leads und Vertrauen aufbauen.',
+      features: ['Next.js / React', 'Mobil-first & schnell', 'SEO-Basics inklusive', 'Core Web Vitals im Blick'],
     },
     {
       icon: Smartphone,
-      title: 'App-Entwicklung',
-      description: 'Native und Cross-Platform mobile Anwendungen',
-      features: [
-        'React Native',
-        'iOS & Android',
-        'API-Integration',
-        'Cloud-Backend'
-      ]
+      title: 'Webapps & Mobile',
+      description: 'Von MVP bis produktionsreif – sauber strukturiert, skalierbar.',
+      features: ['React / React Native / Flutter', 'API-Integration', 'Auth & Payments', 'Cloud-Backend (z. B. Firebase)'],
     },
     {
       icon: Settings,
       title: 'Digitale Lösungen',
-      description: 'Maßgeschneiderte Software für Ihr Unternehmen',
-      features: [
-        'Automatisierung',
-        'Datenanalyse',
-        'Systemintegration',
-        'Cloud-Lösungen'
-      ]
-    }
+      description: 'Automatisierung & Integration, die Zeit spart und sichtbar wirkt.',
+      features: ['Workflows & Automations', 'Datenanalyse & Dashboards', 'System-Integration', 'CI/CD & Hosting'],
+    },
   ]
 
   return (
-    <section id="services" className="py-24 bg-muted/30">
-      <div className="max-w-6xl mx-auto px-6">
+    <section id="services" className="relative py-24 bg-brand-100 dark:bg-background">
+      {/* Soft accents in hero colors */}
+      <div className="pointer-events-none absolute inset-0 opacity-20 dark:opacity-10" aria-hidden>
+        <div className="absolute -top-16 -right-10 h-56 w-56 rounded-full bg-primary/25 blur-3xl dark:hidden" />
+        <div className="absolute -bottom-16 -left-10 h-64 w-64 rounded-full bg-accent/20 blur-3xl dark:hidden" />
+      </div>
+
+      <div className="relative z-10 max-w-6xl mx-auto px-6">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
+          className="text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4" data-testid="services-title">
-            Meine Services
+          <h2 className="mt-4 text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+            Schlank starten. <span className="text-primary">Messbar wachsen.</span>
           </h2>
-          <p className="text-xl text-muted-foreground text-center mb-16 max-w-3xl mx-auto" data-testid="services-subtitle">
-            Von der Konzeption bis zur Umsetzung - ich biete umfassende Entwicklungsdienstleistungen 
-            mit einem fairen und transparenten Preissystem.
+
+          <p className="text-lg mt-3 md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
+            Faire, einsteigerfreundliche Pakete für KMU & Startups – mit klaren Fixpreisen, kurzen Laufzeiten
+            und echter Verantwortung für Ergebnis & Qualität.
           </p>
+
+          {/* Value badges */}
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+            <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 ring-1 ring-emerald-200">
+              <PiggyBank className="h-4 w-4" />
+              Budget-freundlicher Einstieg{STARTING_PRICE ? ` (${STARTING_PRICE})` : ''}
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20">
+              <ShieldCheck className="h-4 w-4" />
+              100 % Geld-zurück-Garantie
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent ring-1 ring-accent/20">
+              <RotateCcw className="h-4 w-4" />
+              Launch in ~3 Wochen
+            </span>
+          </div>
         </motion.div>
 
+        {/* Service Cards */}
         <div className="grid md:grid-cols-3 gap-8 mb-16">
           {services.map((service, index) => (
             <motion.div
-              key={index}
+              key={service.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              transition={{ duration: 0.6, delay: index * 0.08 }}
             >
-              <Card className="h-full hover-elevate" data-testid={`service-card-${index}`}>
+              <Card className="h-full hover-elevate bg-card">
                 <CardContent className="p-8">
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                    <service.icon className="h-8 w-8 text-primary" />
+                  <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
+                    <service.icon className="h-7 w-7 text-primary" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-3" data-testid={`service-title-${index}`}>
-                    {service.title}
-                  </h3>
-                  <p className="text-muted-foreground mb-6" data-testid={`service-description-${index}`}>
-                    {service.description}
-                  </p>
-                  <ul className="space-y-3">
-                    {service.features.map((feature, featureIndex) => (
-                      <li 
-                        key={featureIndex} 
-                        className="flex items-center gap-3"
-                        data-testid={`service-feature-${index}-${featureIndex}`}
-                      >
+
+                  <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
+                  <p className="text-muted-foreground mb-6">{service.description}</p>
+
+                  <ul className="space-y-3 mb-6">
+                    {service.features.map((feature, fIdx) => (
+                      <li key={fIdx} className="flex items-center gap-3">
                         <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
                         <span className="text-sm">{feature}</span>
                       </li>
                     ))}
                   </ul>
+
+                  <Button
+                    className="w-full"
+                    onClick={onContactClick}
+                    aria-label={`Unverbindliches Angebot für ${service.title} anfordern`}
+                  >
+                    Kostenloses Angebot anfordern
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </div>
 
+        {/* Garantie-Panel */}
         <motion.div
-          className="text-center"
-          initial={{ opacity: 0, y: 30 }}
+          className="max-w-3xl mx-auto mb-10"
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
+          transition={{ duration: 0.5 }}
         >
-          <div className="bg-card p-8 rounded-lg border mb-8 max-w-2xl mx-auto">
-            <h3 className="text-xl font-semibold mb-4" data-testid="pricing-title">
-              Faires Preissystem
-            </h3>
-            <p className="text-muted-foreground mb-6" data-testid="pricing-description">
-              Transparente Preisgestaltung ohne versteckte Kosten. Ich biete flexible Lösungen, 
-              die zu Ihrem Budget und Ihren Anforderungen passen.
+          <div className="rounded-xl border bg-card p-6 shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 ring-1 ring-emerald-200">
+                <ShieldCheck className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">100 % Geld-zurück-Garantie</h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Wenn Sie innerhalb von <span className="font-medium">30 Tagen nach Launch</span> nicht zufrieden sind,
+                  erhalten Sie Ihr Geld zurück. Ohne Wenn und Aber. Null Risiko, maximaler Nutzen.
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Starter-Paket */}
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <div className="bg-card p-8 rounded-lg border max-w-2xl mx-auto">
+            <h3 className="text-xl font-semibold mb-2">Starter-Paket für den schnellen Markteintritt</h3>
+            <p className="text-muted-foreground mb-5">
+              Ideal zum Loslegen: 1–3 Seiten, individuelles Design, SEO-Basics, Tracking, Launch in 2–3 Wochen.
+              {STARTING_PRICE ? <> <span className="font-semibold text-foreground">Ab {STARTING_PRICE}</span>.</> : null}
             </p>
-            <Button 
-              size="lg" 
-              onClick={onContactClick}
-              data-testid="button-pricing-contact"
-            >
-              Kostenlos beraten lassen
+            <Button size="lg" onClick={onContactClick} aria-label="Unverbindliche Erstberatung vereinbaren">
+              Kostenlose Erstberatung
             </Button>
           </div>
         </motion.div>

@@ -1,3 +1,6 @@
+// client/src/components/ContactSection.tsx
+'use client'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,133 +11,81 @@ import { useToast } from '@/hooks/use-toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { insertContactMessageSchema } from '@shared/schema'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import {
+  Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
+} from '@/components/ui/form'
 import type { InsertContactMessage } from '@shared/schema'
 
 export default function ContactSection() {
   const { toast } = useToast()
-  
+
   const form = useForm<InsertContactMessage>({
     resolver: zodResolver(insertContactMessageSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      message: ''
-    }
+    defaultValues: { name: '', email: '', message: '' },
+    mode: 'onTouched',
   })
 
   const handleSubmit = async (data: InsertContactMessage) => {
     try {
-      const response = await fetch('/api/contact', {
+      const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
-      
-      const result = await response.json()
-      
-      if (result.success) {
+      const result = await res.json()
+      if (res.ok && result?.success) {
         toast({
-          title: "Nachricht gesendet! 🎉",
-          description: "Vielen Dank für Ihre Nachricht. Ich melde mich bald bei Ihnen!",
+          title: 'Nachricht gesendet',
+          description: 'Danke! Ich melde mich zeitnah mit einer kurzen Einschätzung.',
         })
         form.reset()
       } else {
-        throw new Error(result.error || 'Unbekannter Fehler')
+        throw new Error(result?.error || 'Senden fehlgeschlagen')
       }
-    } catch (error) {
-      console.error('Contact form error:', error)
+    } catch (err) {
       toast({
-        title: "Fehler beim Senden 😔",
-        description: error instanceof Error ? error.message : "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut.",
-        variant: "destructive",
+        title: 'Fehler beim Senden',
+        description: err instanceof Error ? err.message : 'Unerwarteter Fehler',
+        variant: 'destructive',
       })
     }
   }
 
   const contactInfo = [
-    {
-      icon: Mail,
-      title: 'E-Mail',
-      value: 'max.mustermann@email.com',
-      link: 'mailto:max.mustermann@email.com'
-    },
-    {
-      icon: Phone,
-      title: 'Telefon',
-      value: '+49 123 456 789',
-      link: 'tel:+49123456789'
-    },
-    {
-      icon: MapPin,
-      title: 'Standort',
-      value: 'Berlin, Deutschland',
-      link: null
-    }
-  ]
+    { icon: Mail, title: 'E-Mail',   value: 'deine.mail@domain.com', link: 'mailto:deine.mail@domain.com' },
+    { icon: Phone, title: 'Telefon', value: '+43 660 0000000',       link: 'tel:+436600000000' },
+    { icon: MapPin, title: 'Standort', value: 'Tirol, Österreich',   link: null },
+  ] as const
 
   return (
-    <section id="contact" className="py-24 bg-muted/30">
-      <div className="max-w-6xl mx-auto px-6">
+    <section id="contact" className="py-24 bg-white dark:bg-background border-t">
+      <div className="mx-auto max-w-6xl px-6">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
+          className="text-center mb-14"
         >
-          <motion.h2 
-            className="text-4xl md:text-5xl font-bold text-center mb-6"
-            initial={{ opacity: 0, scale: 0.5 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: "backOut" }}
-            data-testid="contact-title"
-          >
-            <span className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
-              Lass uns quatschen!
-            </span>
-            <motion.span 
-              className="inline-block ml-2"
-              animate={{ 
-                rotate: [0, 20, -20, 0],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{ 
-                duration: 3, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
-              }}
-            >
-              💬
-            </motion.span>
-          </motion.h2>
-          <motion.p 
-            className="text-xl text-muted-foreground text-center mb-16 max-w-4xl mx-auto leading-relaxed"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            data-testid="contact-subtitle"
-          >
-            Hast du eine{' '}
-            <span className="text-primary font-semibold">verrückte Idee</span>? 
-            Brauchst du Hilfe bei einem Projekt? Oder willst du einfach nur{' '}
-            <span className="text-purple-500 font-semibold">über Code philosophieren</span>? 
-            <br />
-            Ich freue mich auf deine Nachricht! ✨🚀
-          </motion.p>
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+            Unverbindlich anfragen. <span className="text-primary">Schnelle Rückmeldung.</span>
+          </h2>
+          <p className="text-lg md:text-xl text-muted-foreground mt-3 max-w-3xl mx-auto">
+            Kurz beschreiben, was Sie brauchen – ich melde mich innerhalb von 24&nbsp;Stunden.
+            Auf Wunsch erhalten Sie ein fixes Angebot mit Timeline.
+          </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid gap-12 lg:grid-cols-2">
+          {/* Formular */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <Card>
+            <Card className="bg-card">
               <CardHeader>
                 <CardTitle>Nachricht senden</CardTitle>
               </CardHeader>
@@ -150,6 +101,7 @@ export default function ContactSection() {
                           <FormControl>
                             <Input
                               placeholder="Ihr vollständiger Name"
+                              autoComplete="name"
                               data-testid="input-name"
                               {...field}
                             />
@@ -158,7 +110,7 @@ export default function ContactSection() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="email"
@@ -169,6 +121,8 @@ export default function ContactSection() {
                             <Input
                               type="email"
                               placeholder="ihre.email@example.com"
+                              autoComplete="email"
+                              inputMode="email"
                               data-testid="input-email"
                               {...field}
                             />
@@ -177,7 +131,7 @@ export default function ContactSection() {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="message"
@@ -186,7 +140,7 @@ export default function ContactSection() {
                           <FormLabel>Nachricht</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Beschreiben Sie Ihr Projekt oder Ihre Anfrage..."
+                              placeholder="Kurze Projektbeschreibung, Ziele, Timing …"
                               className="min-h-32"
                               data-testid="input-message"
                               {...field}
@@ -196,56 +150,55 @@ export default function ContactSection() {
                         </FormItem>
                       )}
                     />
-                    
-                    <Button 
-                      type="submit" 
+
+                    <Button
+                      type="submit"
                       className="w-full"
                       disabled={form.formState.isSubmitting}
                       data-testid="button-submit"
                     >
                       {form.formState.isSubmitting ? (
-                        'Wird gesendet...'
+                        'Wird gesendet …'
                       ) : (
                         <>
-                          <Send className="h-4 w-4 mr-2" />
+                          <Send className="mr-2 h-4 w-4" />
                           Nachricht senden
                         </>
                       )}
                     </Button>
+
+                    <p className="text-xs text-muted-foreground text-center">
+                      100&nbsp;% Geld-zurück-Garantie innerhalb von 30 Tagen nach Launch, wenn Sie nicht zufrieden sind.
+                      Ihre Daten werden nur zur Beantwortung Ihrer Anfrage verwendet.
+                    </p>
                   </form>
                 </Form>
               </CardContent>
             </Card>
           </motion.div>
 
+          {/* Kontaktinfos */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <div className="space-y-8">
               <div>
-                <h3 className="text-xl font-semibold mb-6" data-testid="contact-info-title">
-                  Kontaktinformationen
-                </h3>
+                <h3 className="text-xl font-semibold mb-6">Kontaktinformationen</h3>
                 <div className="space-y-4">
-                  {contactInfo.map((info, index) => (
-                    <div 
-                      key={index} 
-                      className="flex items-center gap-4"
-                      data-testid={`contact-info-${index}`}
-                    >
-                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  {contactInfo.map((info, i) => (
+                    <div key={i} className="flex items-center gap-4">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
                         <info.icon className="h-5 w-5 text-primary" />
                       </div>
                       <div>
                         <p className="font-medium">{info.title}</p>
                         {info.link ? (
-                          <a 
+                          <a
                             href={info.link}
                             className="text-muted-foreground hover:text-primary transition-colors"
-                            data-testid={`contact-link-${index}`}
                           >
                             {info.value}
                           </a>
@@ -258,18 +211,15 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              <Card>
+              <Card className="bg-card">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold mb-3" data-testid="response-time-title">
-                    Antwortzeit
-                  </h4>
-                  <p className="text-muted-foreground text-sm mb-4" data-testid="response-time-description">
-                    Ich antworte normalerweise innerhalb von 24 Stunden auf alle Anfragen. 
-                    Bei dringenden Projekten auch schneller.
+                  <h4 className="font-semibold mb-3">Antwortzeit</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    In der Regel innerhalb von 24 Stunden. Bei dringenden Projekten schneller.
                   </p>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm text-green-600 dark:text-green-400">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <span className="text-sm text-emerald-600 dark:text-emerald-400">
                       Verfügbar für neue Projekte
                     </span>
                   </div>

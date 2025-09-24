@@ -1,3 +1,6 @@
+// client/src/components/AboutSection.tsx
+'use client'
+
 import { Card, CardContent } from '@/components/ui/card'
 import { GraduationCap, Briefcase, Code, Award, Heart, Zap, Target, Lightbulb } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -9,196 +12,177 @@ export default function AboutSection() {
   const achievements = [
     {
       icon: GraduationCap,
-      emoji: "🎓",
-      title: 'Bachelor in Software Engineering & Digital Business',
-      description: 'Fundierte Ausbildung in moderner Softwareentwicklung und digitalen Geschäftsmodellen',
-      color: 'from-blue-500 to-purple-500'
+      title: 'B.Sc. Software Engineering & Digital Business',
+      description: 'Fundierte Grundlage in moderner Softwareentwicklung & digitalen Geschäftsmodellen (Leistungsstipendium).',
+      color: 'from-primary to-accent',
     },
     {
       icon: Briefcase,
-      emoji: "💼",
-      title: '1+ Jahr Berufserfahrung',
-      description: 'Praktische Erfahrung in einem Software-Entwicklungsunternehmen',
-      color: 'from-green-500 to-blue-500'
+      title: '1+ Jahr Berufserfahrung (Deniba)',
+      description: 'Arbeit in realen Projekten: sauberer Code, Teamwork, Verantwortung.',
+      color: 'from-emerald-500 to-primary',
     },
     {
       icon: Code,
-      emoji: "⚡",
-      title: 'Vielfältige Projekte',
-      description: 'Entwicklung verschiedener Websites und Apps für unterschiedliche Branchen',
-      color: 'from-purple-500 to-pink-500'
+      title: 'Praxis in Startups (BRNG, Voyal)',
+      description: 'Produktfokus: schnelle Iteration, klare UX, „shippen statt schippern“.',
+      color: 'from-primary to-accent',
     },
     {
       icon: Award,
-      emoji: "🏆",
-      title: 'Qualitätsorientiert',
-      description: 'Fokus auf sauberen Code, beste Praktiken und benutzerfreundliche Lösungen',
-      color: 'from-orange-500 to-red-500'
-    }
-  ]
+      title: 'Qualität & Ergebnisse',
+      description: 'Performance, Accessibility & SEO von Beginn an – messbare Wirkung statt Spielereien.',
+      color: 'from-amber-500 to-rose-500',
+    },
+  ] as const
 
   const passions = [
-    { icon: Heart, text: "Problemlösung", color: "text-red-500" },
-    { icon: Zap, text: "Innovation", color: "text-yellow-500" },
-    { icon: Target, text: "Perfektion", color: "text-blue-500" },
-    { icon: Lightbulb, text: "Kreativität", color: "text-green-500" }
+    { icon: Heart,     text: 'Problemlösung', color: 'text-rose-500' },
+    { icon: Zap,       text: 'Performance',   color: 'text-amber-500' },
+    { icon: Target,    text: 'Klarheit',      color: 'text-primary'   },
+    { icon: Lightbulb, text: 'Kreativität',   color: 'text-emerald-500' },
+  ] as const
+
+  const skills: { name: string; level: number }[] = [
+    { name: 'React', level: 90 },
+    { name: 'Next.js', level: 85 },
+    { name: 'Angular', level: 75 },
+    { name: 'Flutter', level: 72 },
+    { name: 'Node.js', level: 82 },
+    { name: 'Firebase', level: 76 },
+    { name: 'PostgreSQL', level: 74 },
+    { name: 'MongoDB', level: 68 },
+    { name: 'TypeScript', level: 88 },
   ]
 
   return (
-    <section id="about" className="py-24 bg-background relative">
-      {/* Creative Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-primary rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-40 h-40 bg-purple-500 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/3 w-24 h-24 bg-pink-500 rounded-full blur-3xl"></div>
+    <section id="about" className="relative py-24 bg-brand-100 dark:bg-background">
+      {/* soft background accents */}
+      <div className="pointer-events-none absolute inset-0 opacity-20 dark:opacity-10" aria-hidden>
+        <div className="absolute top-16 left-8 h-32 w-32 rounded-full bg-primary/30 blur-3xl" />
+        <div className="absolute bottom-16 right-8 h-40 w-40 rounded-full bg-accent/25 blur-3xl" />
+        <div className="absolute top-1/2 left-1/3 h-24 w-24 rounded-full bg-primary/20 blur-3xl" />
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
+        {/* Header + portrait */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
+          className="text-center mb-12"
         >
-          <div className="text-center mb-16">
-            <motion.h2 
-              className="text-4xl md:text-5xl font-bold mb-6"
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, ease: "backOut" }}
-              data-testid="about-title"
-            >
-              <span className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                Meine Story
-              </span>
-            </motion.h2>
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed"
-              data-testid="about-subtitle"
-            >
-              <p className="mb-6">
-                Ich bin nicht nur ein Developer - ich bin ein{' '}
-                <span className="text-primary font-semibold">digitaler Geschichtenerzähler</span>! 📖
-              </p>
-              <p>
-                Jede Zeile Code ist für mich wie ein Pinselstrich auf einer Leinwand. 
-                Seit über einem Jahr verwandle ich{' '}
-                <span className="text-purple-500 font-semibold">verrückte Ideen</span>{' '}
-                in funktionierende Realität. 🎨✨
-              </p>
-            </motion.div>
+          <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-primary">
+            Über mich
+          </h2>
+
+          <div className="mx-auto mb-6 flex flex-col items-center">
+            <div className="h-28 w-28 overflow-hidden rounded-full ring-2 ring-primary/20 shadow-sm">
+              {/* put your image in /public/case/cto.jpg or adjust path */}
+              <img
+                src="/case/cto.jpg"
+                alt="Nicolas Gadner – Portrait"
+                className="h-full w-full object-cover"
+                loading="eager"
+                decoding="async"
+              />
+            </div>
+            <p className="text-lg md:text-xl mt-4 text-muted-foreground max-w-3xl mx-auto">
+              Full-Stack mit Produktfokus: Strategie, Design und Entwicklung aus einer Hand – für schnelle,
+              zugängliche und messbar erfolgreiche Websites & Webapps.
+            </p>
           </div>
         </motion.div>
 
-        {/* Achievements Grid with Creative Hover Effects */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-          {achievements.map((achievement, index) => (
+        {/* Achievements */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-16">
+          {achievements.map((a, i) => (
             <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50, rotateY: -45 }}
+              key={a.title}
+              initial={{ opacity: 0, y: 40, rotateY: -8 }}
               whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: index * 0.1, ease: "backOut" }}
-              onMouseEnter={() => setHoveredCard(index)}
+              transition={{ duration: 0.6, delay: i * 0.06, ease: 'easeOut' }}
+              onMouseEnter={() => setHoveredCard(i)}
               onMouseLeave={() => setHoveredCard(null)}
             >
-              <Card className="h-full relative overflow-hidden group cursor-pointer" data-testid={`achievement-card-${index}`}>
-                {/* Gradient Background on Hover */}
+              <Card className="group relative h-full cursor-default overflow-hidden">
                 <motion.div
-                  className={`absolute inset-0 bg-gradient-to-br ${achievement.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-                  animate={hoveredCard === index ? { scale: 1.1 } : { scale: 1 }}
-                  transition={{ duration: 0.3 }}
+                  className={`absolute inset-0 bg-gradient-to-br ${a.color} opacity-0 transition-opacity duration-300 group-hover:opacity-10`}
+                  animate={hoveredCard === i ? { scale: 1.04 } : { scale: 1 }}
+                  transition={{ duration: 0.25 }}
                 />
-                
-                <CardContent className="p-6 text-center relative z-10">
-                  <motion.div 
-                    className="relative mb-6"
-                    animate={hoveredCard === index ? { 
-                      scale: 1.2, 
-                      rotate: [0, -10, 10, 0],
-                      y: -5
-                    } : { scale: 1, rotate: 0, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <div className="text-4xl mb-2">{achievement.emoji}</div>
-                    <div className={`w-16 h-16 bg-gradient-to-br ${achievement.color} opacity-20 rounded-2xl flex items-center justify-center mx-auto`}>
-                      <achievement.icon className="h-8 w-8 text-primary" />
+                <CardContent className="relative z-10 p-6 text-center">
+                  <div className="mb-4 flex items-center justify-center">
+                    <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+                      <a.icon className="h-6 w-6 text-primary" />
                     </div>
-                  </motion.div>
-                  
-                  <motion.h3 
-                    className="font-bold mb-3 text-sm"
-                    animate={hoveredCard === index ? { color: "hsl(var(--primary))" } : {}}
-                    data-testid={`achievement-title-${index}`}
-                  >
-                    {achievement.title}
-                  </motion.h3>
-                  
-                  <p className="text-muted-foreground text-sm" data-testid={`achievement-description-${index}`}>
-                    {achievement.description}
-                  </p>
+                  </div>
+                  <h3 className="mb-2 text-sm font-semibold text-foreground">{a.title}</h3>
+                  <p className="text-sm text-muted-foreground">{a.description}</p>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </div>
 
-        {/* Personal Philosophy Section */}
+        {/* Values */}
         <motion.div
-          className="text-center mb-12"
+          className="mb-12 text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h3 className="text-2xl font-bold mb-8">Was mich antreibt 🔥</h3>
-          <div className="flex flex-wrap justify-center gap-6 mb-8">
-            {passions.map((passion, index) => (
+          <h3 className="text-2xl font-bold mb-6 text-foreground">Werte</h3>
+          <div className="flex flex-wrap justify-center gap-4">
+            {passions.map((p, i) => (
               <motion.div
-                key={index}
-                className="flex items-center gap-3 bg-card/50 backdrop-blur-sm px-6 py-3 rounded-full border"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, scale: 0 }}
+                key={p.text}
+                className="flex items-center gap-3 rounded-full border bg-card/70 px-5 py-2.5 backdrop-blur-sm"
+                whileHover={{ y: -2 }}
+                initial={{ opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
+                transition={{ delay: 0.3 + i * 0.06, duration: 0.4 }}
               >
-                <passion.icon className={`h-5 w-5 ${passion.color}`} />
-                <span className="font-medium">{passion.text}</span>
+                <p.icon className={`h-4 w-4 ${p.color}`} />
+                <span className="text-sm">{p.text}</span>
               </motion.div>
             ))}
           </div>
         </motion.div>
 
-        {/* Personal Quote */}
+        {/* Tech stack bars */}
         <motion.div
-          className="max-w-4xl mx-auto text-center"
+          className="mx-auto max-w-3xl"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <blockquote className="text-xl md:text-2xl text-muted-foreground italic leading-relaxed mb-6" data-testid="about-description">
-            "Code ist Poesie in Aktion. Jedes Projekt ist eine neue Chance, 
-            etwas Einzigartiges zu schaffen und das Leben von Menschen zu verbessern. 
-            <span className="text-primary font-semibold not-italic"> 
-              Das ist es, was mich jeden Tag motiviert! 
-            </span> 🚀"
-          </blockquote>
-          <motion.div
-            className="w-16 h-1 bg-gradient-to-r from-primary to-purple-500 mx-auto rounded-full"
-            initial={{ width: 0 }}
-            whileInView={{ width: 64 }}
-            viewport={{ once: true }}
-            transition={{ delay: 1, duration: 0.8 }}
-          />
+          <h3 className="text-2xl font-bold mb-4 text-foreground">Tech-Stack</h3>
+          <p className="mb-6 text-sm text-muted-foreground">
+            Hauptwerkzeuge für Web & Apps. Balken zeigen, wo ich aktuell am meisten liefere.
+          </p>
+
+          <div className="space-y-4">
+            {skills.map(({ name, level }) => (
+              <div key={name}>
+                <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                  <span className="font-medium text-foreground">{name}</span>
+                  <span>{level}%</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
+                    style={{ width: `${level}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>

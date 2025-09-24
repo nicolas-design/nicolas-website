@@ -81,11 +81,18 @@ export default {
           busy: "rgb(239 68 68)",
           offline: "rgb(156 163 175)",
         },
+        brand: {
+          DEFAULT: 'hsl(var(--brand))',
+          50:  'hsl(var(--brand-50))',
+          100: 'hsl(var(--brand-100))',
+        },
       },
+      container: { center: true, padding: '1rem' },
       fontFamily: {
-        sans: ["var(--font-sans)"],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
+        
       },
       keyframes: {
         "accordion-down": {

@@ -1,0 +1,49 @@
+.hero { padding: 6rem 0 4rem; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 1.25rem; }
+
+.heroInner {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.heroCopy .h1 { line-height: 1.1; letter-spacing: -0.02em; }
+.heroParagraph { margin-top: 1rem; font-size: 1.125rem; color: #4b5563; }
+
+.heroForm { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; }
+.buttonPrimary {
+  display: inline-block;
+  padding: 0.875rem 1.25rem;
+  border-radius: 10px;
+  background: #4950F6;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+.heroNote { font-size: 0.875rem; color: #6b7280; }
+
+.heroTrust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.25rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.illustration { position: relative; min-height: 340px; }
+.mainShape svg { width: 100%; height: auto; max-width: 580px; display: block; }
+
+.shape { position: absolute; }
+.shape1 { top: 6%; left: -6%; }
+.shape2 { bottom: 8%; right: -4%; }
+
+@media (max-width: 900px) {
+  .hero { padding: 4.5rem 0 3rem; }
+  .heroInner { grid-template-columns: 1fr; }
+  .illustration { order: -1; min-height: 260px; }
+  .mainShape svg { max-width: 100%; }
+}

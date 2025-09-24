@@ -13,10 +13,10 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
   const [scrolled, setScrolled] = useState(false)
 
   const navItems = [
-    { id: 'hero', label: 'Home' },
-    { id: 'about', label: 'Über mich' },
+    { id: 'hero', label: 'Home' }, 
     { id: 'services', label: 'Services' },
-    { id: 'projects', label: 'Projekte' },
+     { id: 'projects', label: 'Projekte' },
+    { id: 'about', label: 'Über mich' },
     { id: 'contact', label: 'Kontakt' }
   ]
 
