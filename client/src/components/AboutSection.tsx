@@ -3,11 +3,12 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import { GraduationCap, Briefcase, Code, Award, Heart, Zap, Target, Lightbulb } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useState } from 'react'
 
 export default function AboutSection() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
+  const prefersReducedMotion = useReducedMotion()
 
   const achievements = [
     {
@@ -60,11 +61,7 @@ export default function AboutSection() {
   return (
     <section
       id="about"
-      className="
-        relative py-24
-        bg-brand-100
-       dark:bg-background 
-      "
+      className="relative py-24 bg-brand-100 dark:bg-background"
     >
       {/* blobs */}
       <div className="pointer-events-none absolute inset-0 opacity-20 dark:opacity-15" aria-hidden>
@@ -80,9 +77,9 @@ export default function AboutSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="mb-12 text-center"
         >
-          <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight mb-4 text-primary">
+          <h2 className="mt-2 mb-4 text-3xl md:text-4xl font-semibold tracking-tight text-primary">
             Über mich
           </h2>
 
@@ -96,7 +93,7 @@ export default function AboutSection() {
                 decoding="async"
               />
             </div>
-            <p className="text-lg md:text-xl mt-4 text-muted-foreground max-w-3xl mx-auto">
+            <p className="mt-4 max-w-3xl text-lg md:text-xl text-muted-foreground mx-auto">
               Full-Stack mit Produktfokus: Strategie, Design und Entwicklung aus einer Hand – für schnelle,
               zugängliche und messbar erfolgreiche Websites & Webapps.
             </p>
@@ -104,7 +101,7 @@ export default function AboutSection() {
         </motion.div>
 
         {/* Achievements */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-16">
+        <div className="mb-16 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {achievements.map((a, i) => (
             <motion.div
               key={a.title}
@@ -135,7 +132,7 @@ export default function AboutSection() {
           ))}
         </div>
 
-        {/* Values (Werte) – improved dark contrast */}
+        {/* Werte */}
         <motion.div
           className="mb-12 text-center"
           initial={{ opacity: 0, y: 30 }}
@@ -143,18 +140,12 @@ export default function AboutSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h3 className="text-2xl font-bold mb-6 text-foreground">Werte</h3>
+          <h3 className="mb-6 text-2xl font-bold text-foreground">Werte</h3>
           <div className="flex flex-wrap justify-center gap-4">
             {passions.map((p, i) => (
               <motion.div
                 key={p.text}
-                className="
-                  flex items-center gap-3 rounded-full
-                  border ring-1 ring-muted-border
-                  bg-card/70 px-5 py-2.5 backdrop-blur-sm
-                  text-foreground
-                  dark:bg-white/10 dark:ring-white/15 dark:text-foreground
-                "
+                className="flex items-center gap-3 rounded-full border ring-1 ring-muted-border bg-card/70 px-5 py-2.5 backdrop-blur-sm text-foreground dark:bg-white/10 dark:ring-white/15"
                 whileHover={{ y: -2 }}
                 initial={{ opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -168,7 +159,7 @@ export default function AboutSection() {
           </div>
         </motion.div>
 
-        {/* Tech stack bars */}
+        {/* Tech stack bars (mit Fill-Animation) */}
         <motion.div
           className="mx-auto max-w-3xl"
           initial={{ opacity: 0, y: 30 }}
@@ -176,22 +167,30 @@ export default function AboutSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h3 className="text-2xl font-bold mb-4 text-foreground">Tech-Stack</h3>
+          <h3 className="mb-4 text-2xl font-bold text-foreground">Tech-Stack</h3>
           <p className="mb-6 text-sm text-muted-foreground">
             Hauptwerkzeuge für Web & Apps. Balken zeigen, wo ich aktuell am meisten liefere.
           </p>
 
           <div className="space-y-4">
-            {skills.map(({ name, level }) => (
+            {skills.map(({ name, level }, idx) => (
               <div key={name}>
                 <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
                   <span className="font-medium text-foreground">{name}</span>
                   <span>{level}%</span>
                 </div>
+
                 <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-                  <div
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${level}%` }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{
+                      duration: prefersReducedMotion ? 0 : 0.9,
+                      delay: prefersReducedMotion ? 0 : idx * 0.05,
+                      ease: 'easeOut',
+                    }}
                     className="h-full rounded-full bg-gradient-to-r from-primary to-accent"
-                    style={{ width: `${level}%` }}
                   />
                 </div>
               </div>
