@@ -73,11 +73,10 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
         }`}
         style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
-        {/* Full-width bar that always matches the screen width */}
+        {/* Full-width bar that hugs the screen edges */}
         <nav className="w-screen box-border px-4 sm:px-6" role="navigation" aria-label="Main">
-          {/* Flex row: left & right hug edges, middle centers on desktop */}
           <div className="h-14 w-full flex items-center justify-between">
-            {/* Left: Logo (fixed width to avoid font-metric wiggles) */}
+            {/* Left: Logo (fixed width to avoid font metric wiggles) */}
             <div
               className="w-[110px] min-w-[110px] max-w-[110px] truncate cursor-pointer text-xl font-bold text-foreground hover-elevate"
               onClick={() => scrollToSection('hero')}
@@ -103,7 +102,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               ))}
             </div>
 
-            {/* Right: actions — desktop */}
+            {/* Right: actions — desktop (theme + language) */}
             <div className="hidden md:flex items-center justify-end gap-2">
               <Button
                 variant="ghost"
@@ -121,18 +120,16 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               </Button>
             </div>
 
-            {/* Right: actions — mobile (stick to edge via justify-between on parent) */}
+            {/* Right: actions — mobile (ONLY language + hamburger) */}
             <div className="md:hidden flex items-center justify-end gap-2">
               <Button
                 variant="ghost"
-                size="icon"
-                onClick={() => setDarkMode(v => !v)}
-                aria-pressed={darkMode}
-                aria-label={darkMode ? 'Helles Design aktivieren' : 'Dunkles Design aktivieren'}
-                data-testid="theme-toggle-mobile"
-                className={iconBtn}
+                size="sm"
+                onClick={switchLang}
+                aria-label="Sprache wechseln"
+                className="px-2 h-9"
               >
-                {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                {lang === 'de' ? 'EN' : 'DE'}
               </Button>
 
               <Button
@@ -151,59 +148,68 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
         </nav>
       </header>
 
-      {/* Mobile sheet */}
+      {/* Mobile sheet (theme toggle lives here) */}
       {isOpen && (
-  <div
-    id="mobile-menu"
-    className="fixed inset-x-0 top-14 z-[70] md:hidden box-border px-4"
-    style={{
-      // keep at least 1rem padding, but respect safe-area notches
-      paddingLeft: 'max(1rem, env(safe-area-inset-left))',
-      paddingRight: 'max(1rem, env(safe-area-inset-right))',
-    }}
-  >
-    <div className="w-full max-w-[720px] mx-auto overflow-hidden rounded-xl border border-border bg-card shadow-lg backdrop-blur supports-[backdrop-filter]:bg-card/95">
-      <div className="flex items-center justify-between border-b border-border px-4 py-3">
-        <span className="text-sm font-medium text-foreground/80">Menu</span>
-        <div className="flex items-center gap-2">
-          <Button variant="secondary" size="sm" onClick={switchLang} aria-label="Switch language">
-            {lang === 'de' ? 'EN' : 'DE'}
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setDarkMode(v => !v)}
-            aria-pressed={darkMode}
-            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-            className="w-10 h-10"
+        <div id="mobile-menu" className="fixed left-0 right-0 top-14 z-[70] md:hidden">
+          {/* Full-width container handles safe-area padding (no margins on sheet) */}
+          <div
+            className="w-full max-w-full box-border"
+            style={{
+              paddingLeft: 'max(1rem, env(safe-area-inset-left))',
+              paddingRight: 'max(1rem, env(safe-area-inset-right))',
+            }}
           >
-            {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-          </Button>
-        </div>
-      </div>
-
-      <div className="max-h-[70vh] overflow-auto">
-        <div className="flex flex-col divide-y divide-border">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => scrollToSection(item.id)}
-              className={`
-                w-full px-4 py-3.5 text-left text-base font-medium transition-colors
-                ${activeSection === item.id ? 'text-primary' : 'text-foreground'}
-                hover:bg-foreground/[0.04] dark:hover:bg-white/5
-              `}
-              data-testid={`mobile-nav-${item.id}`}
+            {/* Sheet: capped to visual viewport; no overflow in light mode */}
+            <div
+              className="mx-auto box-border w-full max-w-full overflow-hidden rounded-xl border border-border bg-card shadow-lg backdrop-blur supports-[backdrop-filter]:bg-card/95"
+              style={{
+                maxWidth:
+                  'min(720px, calc(100svw - max(2rem, env(safe-area-inset-left) + env(safe-area-inset-right))))',
+                // Fallback if svw unsupported:
+                // @ts-ignore
+                ['--fallbackMax']:
+                  'min(720px, calc(100vw - max(2rem, env(safe-area-inset-left) + env(safe-area-inset-right))))',
+              } as React.CSSProperties}
             >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+              {/* Header row: ONLY theme toggle here on mobile */}
+              <div className="min-w-0 flex items-center justify-between border-b border-border px-4 py-3">
+                <span className="min-w-0 truncate text-sm font-medium text-foreground/80">Menu</span>
+                <div className="shrink-0 flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setDarkMode(v => !v)}
+                    aria-pressed={darkMode}
+                    aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                    className="w-10 h-10"
+                  >
+                    {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                  </Button>
+                </div>
+              </div>
 
+              <div className="max-h-[70vh] overflow-auto">
+                <div className="flex flex-col divide-y divide-border">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollToSection(item.id)}
+                      className={`
+                        w-full px-4 py-3.5 text-left text-base font-medium transition-colors
+                        ${activeSection === item.id ? 'text-primary' : 'text-foreground'}
+                        hover:bg-foreground/[0.04] dark:hover:bg-white/5
+                      `}
+                      data-testid={`mobile-nav-${item.id}`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

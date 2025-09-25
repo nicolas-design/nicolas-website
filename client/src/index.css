@@ -119,6 +119,12 @@
   --elevate-2: rgba(255,255,255,.09);
 }
 
+html, body { overflow-x: hidden; }
+@supports (width: 100svw) {
+  .max-w-visual { max-width: 100svw; }
+}
+
+
 /* Base layer */
 @layer base {
   * { @apply border-border; }
