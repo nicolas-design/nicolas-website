@@ -1,6 +1,8 @@
 // client/src/components/ProjectsSection.tsx
 'use client'
 
+import { motion, useReducedMotion } from 'framer-motion'
+
 type Project = {
   id: number
   title: string
@@ -38,49 +40,49 @@ const PROJECTS: Project[] = [
 ]
 
 export default function ProjectsSection() {
+  const prefersReducedMotion = useReducedMotion()
+
+  // Stagger-Varianten fürs Grid
+  const gridVariants = {
+    hidden: {},
+    show: {
+      transition: {
+        staggerChildren: prefersReducedMotion ? 0 : 0.08,
+      },
+    },
+  }
+
+  // Card-FadeUp
+  const cardVariants = {
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+  }
+
   return (
     <section
       id="projects"
       className="
         relative overflow-hidden py-20
-        /* light */
         bg-gradient-to-b from-white to-brand-50
-        /* dark: slightly lighter than global bg for contrast */
         dark:from-[hsl(222_15%_14%)] dark:to-[hsl(222_15%_12%)]
       "
     >
       {/* Blobs / Farbflecken */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
-        {/* oben rechts – Primary */}
-        <div
-          className="
-            absolute -top-24 -right-24 h-72 w-72 rounded-full
-            bg-primary/20 blur-3xl opacity-60
-            dark:bg-primary/35 dark:opacity-30
-          "
-        />
-        {/* unten links – Accent */}
-        <div
-          className="
-            absolute -bottom-24 -left-24 h-72 w-72 rounded-full
-            bg-accent/20 blur-3xl opacity-60
-            dark:bg-accent/35 dark:opacity-30
-          "
-        />
-        {/* zarter Schimmer in der Mitte */}
-        <div
-          className="
-            absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2
-            h-40 w-40 rounded-full
-            bg-primary/10 blur-3xl opacity-50
-            dark:bg-primary/20 dark:opacity-25
-          "
-        />
+        <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl opacity-60 dark:bg-primary/35 dark:opacity-30" />
+        <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl opacity-60 dark:bg-accent/35 dark:opacity-30" />
+        <div className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 h-40 w-40 rounded-full bg-primary/10 blur-3xl opacity-50 dark:bg-primary/20 dark:opacity-25" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
         {/* Header */}
-        <div className="text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.5 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
+          className="text-center"
+        >
           <span
             className="
               inline-flex items-center gap-2 rounded-full
@@ -98,30 +100,45 @@ export default function ProjectsSection() {
           <p className="text-lg mt-3 md:text-xl leading-relaxed text-muted-foreground mb-6 max-w-3xl mx-auto">
             Maßgeschneiderte Websites & Webapps – Performance, SEO und Conversion von Anfang an gedacht.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Grid */}
-        <div className="mt-12 grid gap-8 md:grid-cols-2">
+        {/* Grid mit Stagger */}
+        <motion.div
+          className="mt-12 grid gap-8 md:grid-cols-2"
+          variants={gridVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.25 }}
+        >
           {PROJECTS.map((p) => (
-            <article
+            <motion.article
               key={p.id}
+              variants={cardVariants}
               className="
                 group overflow-hidden rounded-3xl border bg-card shadow-sm transition
-                hover:shadow-md hover:border-primary/30
-                border-border
+                hover:shadow-md hover:border-primary/30 border-border
               "
             >
               <a href={p.href} target="_blank" rel="noreferrer" aria-label={`${p.title} öffnen`}>
                 <div className="relative">
-                  <img
+                  <motion.img
+                    key={p.image}
                     src={p.image}
                     alt={p.alt}
-                    className="h-56 md:h-72 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                     loading="lazy"
                     decoding="async"
+                    className="h-56 md:h-72 w-full object-cover"
+                    initial={{ opacity: 0, scale: 1.02 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, amount: 0.6 }}
+                    transition={{ duration: prefersReducedMotion ? 0 : 0.5, ease: 'easeOut' }}
                   />
                   {/* Badge oben rechts */}
-                  <div
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.6 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
                     className="
                       pointer-events-none absolute top-4 right-4 rounded-full
                       px-3 py-1 text-xs font-medium ring-1
@@ -130,7 +147,7 @@ export default function ProjectsSection() {
                     "
                   >
                     {p.subtitle}
-                  </div>
+                  </motion.div>
                 </div>
               </a>
 
@@ -155,8 +172,12 @@ export default function ProjectsSection() {
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   {p.chips.map((c) => (
-                    <span
+                    <motion.span
                       key={c}
+                      initial={{ opacity: 0, y: 6 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, ease: 'easeOut' }}
                       className="
                         inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium
                         bg-muted text-muted-foreground ring-1 ring-muted-border
@@ -185,13 +206,19 @@ export default function ProjectsSection() {
                   </a>
                 </div>
               </div>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
 
-        <p className="mx-auto mt-8 max-w-3xl text-center text-xs text-muted-foreground">
+        <motion.p
+          className="mx-auto mt-8 max-w-3xl text-center text-xs text-muted-foreground"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4 }}
+        >
           Mehr Beispiele gern auf Anfrage – ich zeige Ihnen passende Cases für Ihre Branche.
-        </p>
+        </motion.p>
       </div>
     </section>
   )

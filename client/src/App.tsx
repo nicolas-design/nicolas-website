@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Portfolio from "@/pages/Portfolio";
 import NotFound from "@/pages/not-found";
+import { I18nProvider } from "./i18n";
 
 function Router() {
   return (
@@ -21,9 +22,11 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         {/* Site-wide wrapper */}
-        <div className="min-h-dvh bg-slate-50 text-slate-900 font-sans antialiased">
+        <div className="min-h-dvh bg-background text-foreground font-sans antialiased">
+        <I18nProvider>
           <Toaster />
           <Router />
+          </I18nProvider>
         </div>
       </TooltipProvider>
     </QueryClientProvider>
