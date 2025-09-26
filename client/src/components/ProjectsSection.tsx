@@ -2,60 +2,46 @@
 'use client'
 
 import { motion, useReducedMotion } from 'framer-motion'
+import { useI18n } from '@/i18n'
 
-type Project = {
-  id: number
-  title: string
-  subtitle: string
-  description: string
+type ProjectMeta = {
+  id: 'monika' | 'brng'
   image: string
-  alt: string
   href: string
-  chips: string[]
 }
 
-const PROJECTS: Project[] = [
-  {
-    id: 1,
-    title: 'Dr. Monika Gadner',
-    subtitle: 'Praxis-Website',
-    description:
-      'Leichte, SEO-starke Praxisseite mit klarer Termin-CTA. Optimiert für Mobil & Core Web Vitals.',
-    image: '/case/monika-website.png',
-    alt: 'Praxiswebsite Hero – Dr. Monika Gadner',
-    href: 'https://www.gadner.com/',
-    chips: ['<1s LCP', '98 Lighthouse', 'CMS-ready'],
-  },
-  {
-    id: 2,
-    title: 'BRNG',
-    subtitle: 'Landing & App-Shell',
-    description:
-      'Fokussierte Landing mit sauberer IA; App-Shell für schnelles Onboarding & Leads.',
-    image: '/case/brng.png',
-    alt: 'BRNG Landing – Screenshot',
-    href: 'https://brng.app/',
-    chips: ['Next.js', 'API-ready', 'Schnell & schlank'],
-  },
+const PROJECTS_META: ProjectMeta[] = [
+  { id: 'monika', image: '/case/monika-website.png', href: 'https://www.gadner.com/' },
+  { id: 'brng',   image: '/case/brng.png',            href: 'https://brng.app/' },
 ]
 
 export default function ProjectsSection() {
   const prefersReducedMotion = useReducedMotion()
+  const { t } = useI18n()
 
-  // Stagger-Varianten fürs Grid
+  // Lokaliserte Projektdaten auf Basis der Meta-Liste
+  const projects = PROJECTS_META.map(meta => {
+    const base = `items.${meta.id}`
+    return {
+      id: meta.id,
+      title: t(`${base}.title`),
+      subtitle: t(`${base}.subtitle`),
+      description: t(`${base}.description`),
+      image: meta.image,
+      alt: t(`${base}.alt`),
+      href: meta.href,
+      chips: [1,2,3].map(n => t(`${base}.chip.${n}`)),
+    }
+  })
+
   const gridVariants = {
     hidden: {},
-    show: {
-      transition: {
-        staggerChildren: prefersReducedMotion ? 0 : 0.08,
-      },
-    },
+    show: { transition: { staggerChildren: prefersReducedMotion ? 0 : 0.08 } },
   }
 
-  // Card-FadeUp
   const cardVariants = {
     hidden: { opacity: 0, y: 24 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
+    show:   { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
   }
 
   return (
@@ -67,7 +53,7 @@ export default function ProjectsSection() {
         dark:from-[hsl(222_15%_14%)] dark:to-[hsl(222_15%_12%)]
       "
     >
-      {/* Blobs / Farbflecken */}
+      {/* Blobs */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl opacity-60 dark:bg-primary/35 dark:opacity-30" />
         <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-accent/20 blur-3xl opacity-60 dark:bg-accent/35 dark:opacity-30" />
@@ -83,26 +69,25 @@ export default function ProjectsSection() {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="text-center"
         >
-          <span
-            className="
-              inline-flex items-center gap-2 rounded-full
-              bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20
-              dark:bg-primary/20 dark:text-primary dark:ring-primary/30
-            "
-          >
-            Ausgewählte Projekte
+          <span className="
+            inline-flex items-center gap-2 rounded-full
+            bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20
+            dark:bg-primary/20 dark:text-primary dark:ring-primary/30
+          ">
+            {t('projects.badge')}
           </span>
 
           <h2 className="mt-4 text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
-            <span className="text-primary">Ergebnisse</span>, die überzeugen
+            {t('projects.title.leading')}
+            <span className="text-primary">{t('projects.title.highlight')}</span>
           </h2>
 
           <p className="text-lg mt-3 md:text-xl leading-relaxed text-muted-foreground mb-6 max-w-3xl mx-auto">
-            Maßgeschneiderte Websites & Webapps – Performance, SEO und Conversion von Anfang an gedacht.
+            {t('projects.subtitle')}
           </p>
         </motion.div>
 
-        {/* Grid mit Stagger */}
+        {/* Grid */}
         <motion.div
           className="mt-12 grid gap-8 md:grid-cols-2"
           variants={gridVariants}
@@ -110,7 +95,7 @@ export default function ProjectsSection() {
           whileInView="show"
           viewport={{ once: true, amount: 0.25 }}
         >
-          {PROJECTS.map((p) => (
+          {projects.map((p) => (
             <motion.article
               key={p.id}
               variants={cardVariants}
@@ -119,7 +104,12 @@ export default function ProjectsSection() {
                 hover:shadow-md hover:border-primary/30 border-border
               "
             >
-              <a href={p.href} target="_blank" rel="noreferrer" aria-label={`${p.title} öffnen`}>
+              <a
+                href={p.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${p.title} — ${t('projects.card.live')}`}
+              >
                 <div className="relative">
                   <motion.img
                     key={p.image}
@@ -195,7 +185,7 @@ export default function ProjectsSection() {
                     rel="noreferrer"
                     className="inline-flex items-center text-sm font-medium text-primary hover:opacity-90"
                   >
-                    Live ansehen
+                    {t('projects.card.live')}
                     <svg className="ml-1 h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
                       <path
                         fillRule="evenodd"
@@ -217,7 +207,7 @@ export default function ProjectsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.4 }}
         >
-          Mehr Beispiele gern auf Anfrage – ich zeige Ihnen passende Cases für Ihre Branche.
+          {t('projects.footnote')}
         </motion.p>
       </div>
     </section>

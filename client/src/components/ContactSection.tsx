@@ -15,8 +15,10 @@ import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from '@/components/ui/form'
 import type { InsertContactMessage } from '@shared/schema'
+import { useI18n } from '@/i18n'
 
 export default function ContactSection() {
+  const { t } = useI18n()
   const { toast } = useToast()
 
   const form = useForm<InsertContactMessage>({
@@ -35,30 +37,49 @@ export default function ContactSection() {
       const result = await res.json()
       if (res.ok && result?.success) {
         toast({
-          title: 'Nachricht gesendet',
-          description: 'Danke! Ich melde mich zeitnah mit einer kurzen Einschätzung.',
+          title: t('contact.form.toastr.ok.title'),
+          description: t('contact.form.toastr.ok.desc'),
         })
         form.reset()
       } else {
-        throw new Error(result?.error || 'Senden fehlgeschlagen')
+        throw new Error(result?.error || t('contact.form.toastr.err.title'))
       }
     } catch (err) {
       toast({
-        title: 'Fehler beim Senden',
-        description: err instanceof Error ? err.message : 'Unerwarteter Fehler',
+        title: t('contact.form.toastr.err.title'),
+        description:
+          err instanceof Error ? err.message : t('contact.form.toastr.err.desc'),
         variant: 'destructive',
       })
     }
   }
 
   const contactInfo = [
-    { icon: Mail,   title: 'E-Mail',     value: 'deine.mail@domain.com', link: 'mailto:deine.mail@domain.com' },
-    { icon: Phone,  title: 'Telefon',    value: '+43 660 0000000',       link: 'tel:+436600000000' },
-    { icon: MapPin, title: 'Standort',   value: 'Tirol, Österreich',     link: null },
+    {
+      icon: Mail,
+      // nutzt vorhandenen Form-Label-Key für "E-Mail"
+      title: t('contact.form.email.label'),
+      value: 'gadnernicolas@gmail.com',
+      link: 'mailto:gadnernicolas@gmail.com',
+    },
+    {
+      icon: Phone,
+      // kein Key vorhanden -> vorerst hartkodiert (kann ich gern ergänzen)
+      title: t('contact.info.phone'),
+      value: '+43 678 1227369',
+      link: 'tel:+436781227369',
+    },
+    {
+      icon: MapPin,
+      // kein Key vorhanden -> vorerst hartkodiert (kann ich gern ergänzen)
+      title: t('contact.info.location'),
+      value: t('contact.info.location2'),
+      link: null,
+    },
   ] as const
 
   return (
-    <section id="contact" className="py-24 bg-white  dark:bg-[hsl(222_15%_12%)] dark:to-[hsl(222_15%_11%)] border-t">
+    <section id="contact" className="py-24 bg-white dark:bg-[hsl(222_15%_12%)] dark:to-[hsl(222_15%_11%)] border-t">
       <div className="mx-auto max-w-6xl px-6">
         {/* Header */}
         <motion.div
@@ -68,12 +89,19 @@ export default function ContactSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
+           <span className="
+            inline-flex items-center gap-2 rounded-full mb-4
+            bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20
+            dark:bg-primary/20 dark:text-primary dark:ring-primary/30
+          ">
+            {t('contact.contact')}
+          </span>
           <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
-            Unverbindlich anfragen. <span className="text-primary">Schnelle Rückmeldung.</span>
+            {t('contact.title.leading')}
+            <span className="text-primary">{t('contact.title.highlight')}</span>
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground mt-3 max-w-3xl mx-auto">
-            Kurz beschreiben, was Sie brauchen – ich melde mich innerhalb von 24&nbsp;Stunden.
-            Auf Wunsch erhalten Sie ein fixes Angebot mit Timeline.
+            {t('contact.subtitle')}
           </p>
         </motion.div>
 
@@ -87,7 +115,7 @@ export default function ContactSection() {
           >
             <Card className="bg-card">
               <CardHeader>
-                <CardTitle className="text-foreground">Nachricht senden</CardTitle>
+                <CardTitle className="text-foreground">{t('contact.form.submit')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
@@ -97,10 +125,10 @@ export default function ContactSection() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground">Name</FormLabel>
+                          <FormLabel className="text-foreground">{t('contact.form.name.label')}</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Ihr vollständiger Name"
+                              placeholder={t('contact.form.name.placeholder')}
                               autoComplete="name"
                               data-testid="input-name"
                               {...field}
@@ -116,11 +144,11 @@ export default function ContactSection() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground">E-Mail</FormLabel>
+                          <FormLabel className="text-foreground">{t('contact.form.email.label')}</FormLabel>
                           <FormControl>
                             <Input
                               type="email"
-                              placeholder="ihre.email@example.com"
+                              placeholder={t('contact.form.email.placeholder')}
                               autoComplete="email"
                               inputMode="email"
                               data-testid="input-email"
@@ -137,10 +165,10 @@ export default function ContactSection() {
                       name="message"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-foreground">Nachricht</FormLabel>
+                          <FormLabel className="text-foreground">{t('contact.form.message.label')}</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Kurze Projektbeschreibung, Ziele, Timing …"
+                              placeholder={t('contact.form.message.placeholder')}
                               className="min-h-32"
                               data-testid="input-message"
                               {...field}
@@ -156,20 +184,20 @@ export default function ContactSection() {
                       className="w-full"
                       disabled={form.formState.isSubmitting}
                       data-testid="button-submit"
+                      aria-label={t('contact.form.submit')}
                     >
                       {form.formState.isSubmitting ? (
-                        'Wird gesendet …'
+                        t('contact.form.sending')
                       ) : (
                         <>
                           <Send className="mr-2 h-4 w-4" />
-                          Nachricht senden
+                          {t('contact.form.submit')}
                         </>
                       )}
                     </Button>
 
                     <p className="text-xs text-muted-foreground text-center">
-                      100&nbsp;% Geld-zurück-Garantie innerhalb von 30 Tagen nach Launch, wenn Sie nicht zufrieden sind.
-                      Ihre Daten werden nur zur Beantwortung Ihrer Anfrage verwendet.
+                      {t('contact.legal.note')}
                     </p>
                   </form>
                 </Form>
@@ -177,7 +205,7 @@ export default function ContactSection() {
             </Card>
           </motion.div>
 
-          {/* Kontaktinfos (Dark Mode kontrastreicher) */}
+          {/* Kontaktinfos */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -186,7 +214,7 @@ export default function ContactSection() {
           >
             <div className="space-y-8">
               <div>
-                <h3 className="text-xl font-semibold mb-6 text-foreground">Kontaktinformationen</h3>
+                <h3 className="text-xl font-semibold mb-6 text-foreground">{t('contact.info.title')}</h3>
                 <div className="space-y-4">
                   {contactInfo.map((info, i) => (
                     <div key={i} className="flex items-center gap-4">
@@ -202,11 +230,7 @@ export default function ContactSection() {
                         {info.link ? (
                           <a
                             href={info.link}
-                            className="
-                              transition-colors
-                              text-foreground/80 hover:text-primary
-                              dark:text-foreground hover:dark:text-primary
-                            "
+                            className="transition-colors text-foreground/80 hover:text-primary dark:text-foreground hover:dark:text-primary"
                           >
                             {info.value}
                           </a>
@@ -221,14 +245,14 @@ export default function ContactSection() {
 
               <Card className="bg-card">
                 <CardContent className="p-6">
-                  <h4 className="font-semibold mb-3 text-foreground">Antwortzeit</h4>
+                  <h4 className="font-semibold mb-3 text-foreground">{t('contact.response.title')}</h4>
                   <p className="text-sm text-muted-foreground mb-4">
-                    In der Regel innerhalb von 24 Stunden. Bei dringenden Projekten schneller.
+                    {t('contact.response.desc')}
                   </p>
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-emerald-500" />
                     <span className="text-sm text-emerald-600 dark:text-emerald-400">
-                      Verfügbar für neue Projekte
+                      {t('contact.response.available')}
                     </span>
                   </div>
                 </CardContent>

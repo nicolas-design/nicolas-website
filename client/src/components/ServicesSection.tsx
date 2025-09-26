@@ -14,6 +14,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useI18n } from '@/i18n'
 
 interface ServicesSectionProps {
   onContactClick: () => void
@@ -22,24 +23,41 @@ interface ServicesSectionProps {
 const STARTING_PRICE = '€ 590'
 
 export default function ServicesSection({ onContactClick }: ServicesSectionProps) {
+  const { t, lang } = useI18n()
+
   const services = [
     {
       icon: Globe,
-      title: 'Webseiten & Landings',
-      description: 'Moderne, responsive Sites, die Leads und Vertrauen aufbauen.',
-      features: ['Next.js / React', 'Mobil-first & schnell', 'SEO-Basics inklusive', 'Core Web Vitals im Blick'],
+      title: t('services.card.web.title'),
+      description: t('services.card.web.desc'),
+      features: [
+        t('services.card.web.feature.1'),
+        t('services.card.web.feature.2'),
+        t('services.card.web.feature.3'),
+        t('services.card.web.feature.4'),
+      ],
     },
     {
       icon: Smartphone,
-      title: 'Webapps & Mobile',
-      description: 'Von MVP bis produktionsreif – sauber strukturiert, skalierbar.',
-      features: ['React / React Native / Flutter', 'API-Integration', 'Auth & Payments', 'Cloud-Backend (z. B. Firebase)'],
+      title: t('services.card.app.title'),
+      description: t('services.card.app.desc'),
+      features: [
+        t('services.card.app.feature.1'),
+        t('services.card.app.feature.2'),
+        t('services.card.app.feature.3'),
+        t('services.card.app.feature.4'),
+      ],
     },
     {
       icon: Settings,
-      title: 'Digitale Lösungen',
-      description: 'Automatisierung & Integration, die Zeit spart und sichtbar wirkt.',
-      features: ['Workflows & Automations', 'Datenanalyse & Dashboards', 'System-Integration', 'CI/CD & Hosting'],
+      title: t('services.card.sol.title'),
+      description: t('services.card.sol.desc'),
+      features: [
+        t('services.card.sol.feature.1'),
+        t('services.card.sol.feature.2'),
+        t('services.card.sol.feature.3'),
+        t('services.card.sol.feature.4'),
+      ],
     },
   ]
 
@@ -60,36 +78,47 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
           transition={{ duration: 0.6 }}
           className="text-center"
         >
+          <span
+            className="
+              inline-flex items-center gap-2 rounded-full
+              bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20
+              dark:bg-primary/20 dark:text-primary dark:ring-primary/30
+            "
+          >
+            {t('nav.services')}
+          </span>
+
           <h2 className="mt-4 text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
-            Schlank starten. <span className="text-primary">Messbar wachsen.</span>
+            {t('services.title.leading')}
+            <span className="text-primary">{t('services.title.highlight')}</span>
           </h2>
 
           <p className="text-lg mt-3 md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
-            Faire, einsteigerfreundliche Pakete für KMU & Startups – mit klaren Fixpreisen, kurzen Laufzeiten
-            und echter Verantwortung für Ergebnis & Qualität.
+            {t('services.subtitle')}
           </p>
 
-          {/* Value badges (improved dark contrast) */}
+          {/* Value badges */}
           <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
             <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ring-1
                               bg-emerald-50 text-emerald-700 ring-emerald-200
                               dark:bg-emerald-400/15 dark:text-emerald-200 dark:ring-emerald-400/30">
               <PiggyBank className="h-4 w-4" />
-              Budget-freundlicher Einstieg{STARTING_PRICE ? ` (${STARTING_PRICE})` : ''}
+              {t('services.badge.budget')}
+              {STARTING_PRICE ? ` (${t('common.startingPrice.prefix')} ${STARTING_PRICE})` : ''}
             </span>
 
             <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ring-1
                               bg-primary/10 text-primary ring-primary/20
                               dark:bg-primary/20 dark:text-primary dark:ring-primary/25">
               <ShieldCheck className="h-4 w-4" />
-              100 % Geld-zurück-Garantie
+              {t('services.badge.guarantee')}
             </span>
 
             <span className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ring-1
                               bg-accent/10 text-accent ring-accent/20
                               dark:bg-accent/20 dark:text-accent dark:ring-accent/25">
               <RotateCcw className="h-4 w-4" />
-              Launch in ~3 Wochen
+              {t('services.badge.launch')}
             </span>
           </div>
         </motion.div>
@@ -125,9 +154,9 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                   <Button
                     className="w-full"
                     onClick={onContactClick}
-                    aria-label={`Unverbindliches Angebot für ${service.title} anfordern`}
+                    aria-label={`${t('services.cta.request')} – ${service.title}`}
                   >
-                    Kostenloses Angebot anfordern
+                    {t('services.cta.request')}
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </CardContent>
@@ -152,12 +181,11 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                 <ShieldCheck className="h-5 w-5 text-emerald-600 dark:text-emerald-300" />
               </div>
               <div>
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-        100 % Geld-zurück-Garantie
-      </h3>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  {t('services.guarantee.title')}
+                </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-                  Wenn Sie innerhalb von <span className="font-medium">30 Tagen nach Launch</span> nicht zufrieden sind,
-                  erhalten Sie Ihr Geld zurück. Ohne Wenn und Aber. Null Risiko, maximaler Nutzen.
+                  {t('services.guarantee.body')}
                 </p>
               </div>
             </div>
@@ -173,15 +201,19 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <div className="bg-card p-8 rounded-lg border max-w-2xl mx-auto">
-          <h3 className="text-xl font-semibold mb-2 text-foreground dark:text-white">
-  Starter-Paket für den schnellen Markteintritt
-</h3>
+            <h3 className="text-xl font-semibold mb-2 text-foreground dark:text-white">
+              {t('services.starter.title')}
+            </h3>
             <p className="text-muted-foreground mb-5">
-              Ideal zum Loslegen: 1–3 Seiten, individuelles Design, SEO-Basics, Tracking, Launch in 2–3 Wochen.
-              {STARTING_PRICE ? <> <span className="font-semibold text-foreground">Ab {STARTING_PRICE}</span>.</> : null}
+              {t('services.starter.desc')}{' '}
+              {STARTING_PRICE ? (
+                <span className="font-semibold text-foreground">
+                  {t('common.startingPrice.prefix')} {STARTING_PRICE}.
+                </span>
+              ) : null}
             </p>
-            <Button size="lg" onClick={onContactClick} aria-label="Unverbindliche Erstberatung vereinbaren">
-              Kostenlose Erstberatung
+            <Button size="lg" onClick={onContactClick} aria-label={t('services.starter.cta')}>
+              {t('services.starter.cta')}
             </Button>
           </div>
         </motion.div>

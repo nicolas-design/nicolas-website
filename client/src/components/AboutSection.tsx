@@ -5,64 +5,36 @@ import { Card, CardContent } from '@/components/ui/card'
 import { GraduationCap, Briefcase, Code, Award, Heart, Zap, Target, Lightbulb } from 'lucide-react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useState } from 'react'
+import { useI18n } from '@/i18n'
 
 export default function AboutSection() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
   const prefersReducedMotion = useReducedMotion()
+  const { t } = useI18n()
 
   const achievements = [
-    {
-      icon: GraduationCap,
-      title: 'B.Sc. Software Engineering & Digital Business',
-      description:
-        'Fundierte Grundlage in moderner Softwareentwicklung & digitalen Geschäftsmodellen (Leistungsstipendium).',
-      color: 'from-primary to-accent',
-    },
-    {
-      icon: Briefcase,
-      title: '1+ Jahr Berufserfahrung (Deniba)',
-      description: 'Arbeit in realen Projekten: sauberer Code, Teamwork, Verantwortung.',
-      color: 'from-emerald-500 to-primary',
-    },
-    {
-      icon: Code,
-      title: 'Praxis in Startups (BRNG, Voyal)',
-      description: 'Produktfokus: schnelle Iteration, klare UX, „shippen statt schippern“.',
-      color: 'from-primary to-accent',
-    },
-    {
-      icon: Award,
-      title: 'Qualität & Ergebnisse',
-      description: 'Performance, Accessibility & SEO von Beginn an – messbare Wirkung statt Spielereien.',
-      color: 'from-amber-500 to-rose-500',
-    },
+    { icon: GraduationCap, title: t('about.achievements.1.title'), description: t('about.achievements.1.desc'), color: 'from-primary to-accent' },
+    { icon: Briefcase,     title: t('about.achievements.2.title'), description: t('about.achievements.2.desc'), color: 'from-emerald-500 to-primary' },
+    { icon: Code,          title: t('about.achievements.3.title'), description: t('about.achievements.3.desc'), color: 'from-primary to-accent' },
+    { icon: Award,         title: t('about.achievements.4.title'), description: t('about.achievements.4.desc'), color: 'from-amber-500 to-rose-500' },
   ] as const
 
   const passions = [
-    { icon: Heart,     text: 'Problemlösung', color: 'text-rose-500' },
-    { icon: Zap,       text: 'Performance',   color: 'text-amber-500' },
-    { icon: Target,    text: 'Klarheit',      color: 'text-primary'   },
-    { icon: Lightbulb, text: 'Kreativität',   color: 'text-emerald-500' },
+    { icon: Heart,     text: t('about.values.problemSolving'), color: 'text-rose-500' },
+    { icon: Zap,       text: t('about.values.performance'),    color: 'text-amber-500' },
+    { icon: Target,    text: t('about.values.clarity'),        color: 'text-primary'   },
+    { icon: Lightbulb, text: t('about.values.creativity'),     color: 'text-emerald-500' },
   ] as const
 
   const skills: { name: string; level: number }[] = [
-    { name: 'React', level: 90 },
-    { name: 'Next.js', level: 85 },
-    { name: 'Angular', level: 75 },
-    { name: 'Flutter', level: 72 },
-    { name: 'Dart', level: 89 },
-    { name: 'Node.js', level: 82 },
-    { name: 'Firebase', level: 76 },
-    { name: 'PostgreSQL', level: 74 },
-    { name: 'MongoDB', level: 68 },
+    { name: 'React', level: 90 }, { name: 'Next.js', level: 85 }, { name: 'Angular', level: 75 },
+    { name: 'Flutter', level: 72 }, { name: 'Dart', level: 89 }, { name: 'Node.js', level: 82 },
+    { name: 'Firebase', level: 76 }, { name: 'PostgreSQL', level: 74 }, { name: 'MongoDB', level: 68 },
     { name: 'TypeScript', level: 88 },
   ]
 
   return (
-    <section
-      id="about"
-      className="relative py-24 bg-brand-100 dark:bg-background"
-    >
+    <section id="about" className="relative py-24 bg-brand-100 dark:bg-background">
       {/* blobs */}
       <div className="pointer-events-none absolute inset-0 opacity-20 dark:opacity-15" aria-hidden>
         <div className="absolute top-16 left-8 h-32 w-32 rounded-full bg-primary/30 blur-3xl" />
@@ -71,7 +43,7 @@ export default function AboutSection() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-6xl px-6">
-        {/* Header + portrait */}
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -79,23 +51,19 @@ export default function AboutSection() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center"
         >
-          <h2 className="mt-2 mb-4 text-3xl md:text-4xl font-semibold tracking-tight text-primary">
-            Über mich
+          <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20 dark:bg-primary/20 dark:text-primary dark:ring-primary/30">
+            {t('about.title')}
+          </span>
+          <h2 className="mt-4 mb-4 text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
+            Nicolas<span className="text-primary"> Gadner</span>
           </h2>
 
           <div className="mx-auto mb-6 flex flex-col items-center">
             <div className="h-28 w-28 overflow-hidden rounded-full ring-2 ring-primary/20 dark:ring-white/15 shadow-sm">
-              <img
-                src="/case/cto.jpg"
-                alt="Nicolas Gadner – Portrait"
-                className="h-full w-full object-cover"
-                loading="eager"
-                decoding="async"
-              />
+              <img src="/case/cto.jpg" alt="Nicolas Gadner – Portrait" className="h-full w-full object-cover" loading="eager" decoding="async" />
             </div>
             <p className="mt-4 max-w-3xl text-lg md:text-xl text-muted-foreground mx-auto">
-              Full-Stack mit Produktfokus: Strategie, Design und Entwicklung aus einer Hand – für schnelle,
-              zugängliche und messbar erfolgreiche Websites & Webapps.
+              {t('about.intro')}
             </p>
           </div>
         </motion.div>
@@ -140,7 +108,7 @@ export default function AboutSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h3 className="mb-6 text-2xl font-bold text-foreground">Werte</h3>
+          <h3 className="mb-6 text-2xl font-bold text-foreground">{t('about.values.title')}</h3>
           <div className="flex flex-wrap justify-center gap-4">
             {passions.map((p, i) => (
               <motion.div
@@ -159,7 +127,7 @@ export default function AboutSection() {
           </div>
         </motion.div>
 
-        {/* Tech stack bars (mit Fill-Animation) */}
+        {/* Tech stack bars */}
         <motion.div
           className="mx-auto max-w-3xl"
           initial={{ opacity: 0, y: 30 }}
@@ -167,10 +135,8 @@ export default function AboutSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <h3 className="mb-4 text-2xl font-bold text-foreground">Tech-Stack</h3>
-          <p className="mb-6 text-sm text-muted-foreground">
-            Hauptwerkzeuge für Web & Apps. Balken zeigen, wo ich aktuell am meisten liefere.
-          </p>
+          <h3 className="mb-4 text-2xl font-bold text-foreground">{t('about.tech.title')}</h3>
+          <p className="mb-6 text-sm text-muted-foreground">{t('about.tech.desc')}</p>
 
           <div className="space-y-4">
             {skills.map(({ name, level }, idx) => (

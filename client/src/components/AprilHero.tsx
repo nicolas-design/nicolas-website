@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useI18n } from '@/i18n'
 
 type SlideKey = 'websites' | 'webapps' | 'landing' | 'mobile'
 type Slide = {
@@ -10,23 +11,8 @@ type Slide = {
   alt: string
   blurb: string
   bullets: string[]
-  kind: string
+  kind: 'web' | 'app'
 }
-
-const SLIDES: Slide[] = [
-  { key: 'websites', label: 'Websites', img: '/case/monika-website.png', alt: 'Beispiel-Website',
-    blurb: 'Schnelle, SEO-starke Seiten, die Termine & Anfragen steigern.',
-    bullets: ['<1s LCP', 'Core Web Vitals grün', 'CMS-Integration'], kind: 'web' },
-  { key: 'landing', label: 'Landing Pages', img: '/case/brng.png', alt: 'Beispiel-Landing',
-    blurb: 'Klar fokussierte Landing Pages, optimiert auf Conversion.',
-    bullets: ['A/B bereit', 'Analytics', 'Schnelle Umsetzung'], kind: 'web' },
-  { key: 'webapps', label: 'Webapps', img: '/case/orderboy.png', alt: 'Beispiel-Webapp',
-    blurb: 'Individuelle Webanwendungen – von MVP bis produktionsreif.',
-    bullets: ['Next.js', 'API-ready', 'Auth & Payments'], kind: 'web' },
-  { key: 'mobile', label: 'Mobile', img: '/case/brng-phone.png', alt: 'Mobile Oberfläche',
-    blurb: 'Mobile-first UIs & App-Shells für nahtlose Flows.',
-    bullets: ['PWA-Ready', 'Offline-fähig', 'App-Shell'], kind: 'app' },
-]
 
 function PhoneMockup({ src, alt }: { src: string; alt: string }) {
   return (
@@ -51,7 +37,64 @@ function PhoneMockup({ src, alt }: { src: string; alt: string }) {
 }
 
 export default function Hero() {
+  const { t } = useI18n()
   const [active, setActive] = useState<SlideKey>('websites')
+
+  // Build localized slides
+  const SLIDES: Slide[] = useMemo(() => ([
+    {
+      key: 'websites',
+      label: t('slides.websites.label'),
+      img: '/case/monika-website.png',
+      alt: t('slides.websites.label'),
+      blurb: t('slides.websites.blurb'),
+      bullets: [
+        t('slides.websites.bullet.1'),
+        t('slides.websites.bullet.2'),
+        t('slides.websites.bullet.3'),
+      ],
+      kind: 'web',
+    },
+    {
+      key: 'landing',
+      label: t('slides.landing.label'),
+      img: '/case/brng.png',
+      alt: t('slides.landing.label'),
+      blurb: t('slides.landing.blurb'),
+      bullets: [
+        t('slides.landing.bullet.1'),
+        t('slides.landing.bullet.2'),
+        t('slides.landing.bullet.3'),
+      ],
+      kind: 'web',
+    },
+    {
+      key: 'webapps',
+      label: t('slides.webapps.label'),
+      img: '/case/orderboy.png',
+      alt: t('slides.webapps.label'),
+      blurb: t('slides.webapps.blurb'),
+      bullets: [
+        t('slides.webapps.bullet.1'),
+        t('slides.webapps.bullet.2'),
+        t('slides.webapps.bullet.3'),
+      ],
+      kind: 'web',
+    },
+    {
+      key: 'mobile',
+      label: t('slides.mobile.label'),
+      img: '/case/brng-phone.png',
+      alt: t('slides.mobile.label'),
+      blurb: t('slides.mobile.blurb'),
+      bullets: [
+        t('slides.mobile.bullet.1'),
+        t('slides.mobile.bullet.2'),
+        t('slides.mobile.bullet.3'),
+      ],
+      kind: 'app',
+    },
+  ]), [t])
 
   useEffect(() => {
     const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -61,13 +104,13 @@ export default function Hero() {
       setActive(curr => order[(order.indexOf(curr) + 1) % order.length])
     }, 6000)
     return () => clearInterval(id)
-  }, [])
+  }, [SLIDES])
 
   useEffect(() => {
     SLIDES.forEach(s => { const i = new Image(); i.src = s.img })
-  }, [])
+  }, [SLIDES])
 
-  const slide = useMemo(() => SLIDES.find(s => s.key === active)!, [active])
+  const slide = useMemo(() => SLIDES.find(s => s.key === active)!, [active, SLIDES])
 
   return (
     <section
@@ -97,26 +140,23 @@ export default function Hero() {
                 dark:bg-indigo-400/10 dark:text-indigo-300 dark:ring-indigo-400/20
               "
             >
-              Websites & Webapps — maßgeschneidert für Ihr Business
+              {t('hero.badge')}
             </span>
 
             <h1 className="mt-5 text-4xl font-semibold leading-tight text-slate-900 md:text-5xl dark:text-slate-100">
-              Launchen Sie eine Seite, die <span className="text-indigo-600 dark:text-indigo-400">Kund:innen gewinnt</span>
+              {t('hero.h1.leading')}
+              <span className="text-indigo-600 dark:text-indigo-400">{t('hero.h1.highlight')}</span>
             </h1>
 
             <p className="mt-4 max-w-xl text-slate-600 dark:text-slate-300">
-              Strategie, Design und Entwicklung aus einer Hand. Schnell, SEO-ready und auf Conversion gebaut — ohne Agentur-Overhead.
+              {t('hero.p')}
             </p>
 
             <ul className="mt-6 grid max-w-xl gap-3 text-sm text-slate-700 dark:text-slate-300">
-              {[
-                'Discovery → Prototyp → Launch in <3 Wochen',
-                'Performance, Accessibility & SEO von Anfang an',
-                'Integrationen: CMS, Payments, Booking, Analytics',
-              ].map((item) => (
+              {[t('hero.bullet.1'), t('hero.bullet.2'), t('hero.bullet.3')].map((item) => (
                 <li key={item} className="flex items-start gap-3">
                   <svg className="mt-0.5 h-5 w-5 flex-none text-emerald-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                    <path fillRule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.07 7.09a1 1 0 0 1-1.42.01L3.29 9.88a1 1 0 1 1 1.42-1.41l3.19 3.19 6.36-6.37a1 1 0 0 1 1.444 0z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.09 7.09a1 1 0 0 1-1.42.01L3.29 9.88a1 1 0 1 1 1.42-1.41l3.19 3.19 6.36-6.37a1 1 0 0 1 1.444 0z" clipRule="evenodd" />
                   </svg>
                   <span dangerouslySetInnerHTML={{ __html: item }} />
                 </li>
@@ -132,7 +172,7 @@ export default function Hero() {
                   dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:text-slate-900
                 "
               >
-                Unverbindliches Angebot anfordern
+                {t('hero.cta.primary')}
               </a>
               <a
                 href="#work"
@@ -142,16 +182,28 @@ export default function Hero() {
                   dark:ring-slate-700/60 dark:text-slate-200 dark:hover:bg-slate-800
                 "
               >
-                Projekte ansehen
+                {t('hero.cta.secondary')}
               </a>
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400">
-              <div className="flex items-center gap-2"><span className="font-semibold text-slate-700 dark:text-slate-200">12+</span> ausgelieferte Projekte</div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-slate-700 dark:text-slate-200">
+                  {t('hero.stats.projects')}
+                </span>
+              </div>
               <div className="h-4 w-px bg-slate-200 dark:bg-slate-700/60" />
-              <div className="flex items-center gap-2"><span className="font-semibold text-slate-700 dark:text-slate-200">~3 Wochen</span> durchschnittliche Dauer</div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-slate-700 dark:text-slate-200">
+                  {t('hero.stats.duration')}
+                </span>
+              </div>
               <div className="h-4 w-px bg-slate-200 dark:bg-slate-700/60" />
-              <div className="flex items-center gap-2"><span className="font-semibold text-slate-700 dark:text-slate-200">Core Web Vitals</span> im grünen Bereich</div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-slate-700 dark:text-slate-200">
+                  {t('hero.stats.vitals')}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -184,7 +236,7 @@ export default function Hero() {
                 dark:border-slate-700/60 dark:bg-slate-900/60
               "
             >
-              <a href="#work" aria-label={`${slide.label} – mehr erfahren`}>
+              <a href="#work" aria-label={`${slide.label} — ${t('hero.card.moreAria')}`}>
                 {slide.kind === 'app' ? (
                   <PhoneMockup src={slide.img} alt={slide.alt} />
                 ) : (
@@ -202,7 +254,9 @@ export default function Hero() {
               <div className="p-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{slide.label}</h3>
-                  <span className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">Angebot</span>
+                  <span className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    {t('hero.card.offer')}
+                  </span>
                 </div>
                 <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{slide.blurb}</p>
 
@@ -224,7 +278,7 @@ export default function Hero() {
                   href="#work"
                   className="mt-4 inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
                 >
-                  Mehr dazu
+                  {t('hero.card.more')}
                   <svg className="ml-1 h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
                     <path fillRule="evenodd" d="M12.3 5.3a1 1 0 011.4 0l3 3a1 1 0 010 1.4l-3 3a1 1 0 11-1.4-1.4L13.59 10H4a1 1 0 110-2h9.59l-1.29-1.29a1 1 0 010-1.41z" clipRule="evenodd"/>
                   </svg>
@@ -236,7 +290,7 @@ export default function Hero() {
                 {SLIDES.map(s => (
                   <button
                     key={s.key}
-                    aria-label={`${s.label} anzeigen`}
+                    aria-label={`${s.label} ${t('hero.card.moreAria')}`}
                     onClick={() => setActive(s.key)}
                     className={`
                       h-1.5 w-6 rounded-full transition
@@ -250,7 +304,8 @@ export default function Hero() {
             </div>
 
             <p className="mx-auto mt-4 max-w-md text-center text-xs text-slate-500 md:text-right dark:text-slate-400">
-              Websites, Webapps, Landing Pages & Mobile — mehr Beispiele unten.
+              {/* You can add a key for this note later if you want it localized */}
+              {t('hero.desc')}
             </p>
           </div>
         </div>
