@@ -114,20 +114,10 @@ export default function Hero() {
 
   return (
     <section
-      id="hero"
-      className="
-        relative overflow-hidden
-        bg-gradient-to-b from-slate-50 to-white
-        dark:from-slate-950 dark:to-slate-900
-      "
-    >
-      {/* background accents */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-indigo-100 blur-3xl opacity-60
-                        dark:bg-indigo-500/20" />
-        <div className="absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-cyan-100 blur-3xl opacity-60
-                        dark:bg-cyan-500/20" />
-      </div>
+  id="hero"
+  className="relative overflow-hidden bg-background"
+>
+      
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 pt-20 pb-16 md:pt-28 md:pb-20">
         <div className="grid items-center gap-12 md:grid-cols-2">

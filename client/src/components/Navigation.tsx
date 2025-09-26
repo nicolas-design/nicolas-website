@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Menu, X, Sun, Moon } from 'lucide-react'
 import { useI18n } from '@/i18n'
+import LogoWordmark from '@/components/LogoWordmark'
 
 type NavigationProps = {
   activeSection: string
@@ -77,14 +78,18 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
         <nav className="w-screen box-border px-4 sm:px-6" role="navigation" aria-label="Main">
           <div className="h-14 w-full flex items-center justify-between">
             {/* Left: Logo (fixed width to avoid font metric wiggles) */}
-            <div
-              className="w-[110px] min-w-[110px] max-w-[110px] truncate cursor-pointer text-xl font-bold text-foreground hover-elevate"
-              onClick={() => scrollToSection('hero')}
-              data-testid="logo"
-              title="Portfolio"
-            >
-              Portfolio
-            </div>
+        
+            <button
+  onClick={() => scrollToSection('hero')}
+  title="gadner."
+  aria-label="Go to home"
+  className="inline-flex items-center cursor-pointer"
+>
+<LogoWordmark className="text-[28px] md:text-[32px]" accentDot />
+</button>
+
+
+
 
             {/* Center: Desktop nav */}
             <div className="hidden md:flex flex-1 items-center justify-center gap-6">

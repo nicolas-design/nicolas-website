@@ -7,6 +7,7 @@ import ProjectsSection from '@/components/ProjectsSection'
 import ContactSection from '@/components/ContactSection'
 import Footer from '@/components/Footer'
 import HeroApril from '@/components/AprilHero'
+import HeroNicolas from '@/components/HeroNicolas'
 
 export default function Portfolio() {
   const [activeSection, setActiveSection] = useState('hero')
@@ -44,6 +45,7 @@ export default function Portfolio() {
     <div className="min-h-screen bg-background">
       <Navigation activeSection={activeSection} setActiveSection={setActiveSection} />
       <main>
+        <HeroNicolas />
         <HeroApril />
         
         <ServicesSection onContactClick={scrollToContact} />
