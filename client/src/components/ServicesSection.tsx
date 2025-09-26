@@ -20,12 +20,19 @@ interface ServicesSectionProps {
   onContactClick: () => void
 }
 
+type ServiceDef = {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
+  title: string
+  description: string
+  features: string[]
+}
+
 const STARTING_PRICE = '€ 590'
 
 export default function ServicesSection({ onContactClick }: ServicesSectionProps) {
-  const { t, lang } = useI18n()
+  const { t } = useI18n()
 
-  const services = [
+  const services: ServiceDef[] = [
     {
       icon: Globe,
       title: t('services.card.web.title'),
@@ -124,7 +131,7 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
         </motion.div>
 
         {/* Service Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-3 gap-8 mb-16 items-stretch">
           {services.map((service, index) => (
             <motion.div
               key={service.title}
@@ -132,17 +139,21 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.08 }}
+              className="h-full"
             >
-              <Card className="h-full hover-elevate bg-card">
-                <CardContent className="p-8">
+              <Card className="h-full flex">
+                <CardContent className="p-8 flex flex-col flex-1 min-w-0">
                   <div className="w-14 h-14 rounded-lg flex items-center justify-center mb-6 bg-primary/10 dark:bg-primary/15">
                     <service.icon className="h-7 w-7 text-primary" />
                   </div>
 
-                  <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-                  <p className="text-muted-foreground mb-6">{service.description}</p>
+                  {/* Kopfbereich mit fester Mindesthöhe (optional für noch gleichere Höhen) */}
+                  <div className="mb-4">
+                    <h3 className="text-xl font-semibold mb-1">{service.title}</h3>
+                    <p className="text-muted-foreground">{service.description}</p>
+                  </div>
 
-                  <ul className="space-y-3 mb-6">
+                  <ul className="space-y-3">
                     {service.features.map((feature, fIdx) => (
                       <li key={fIdx} className="flex items-center gap-3">
                         <CheckCircle className="h-4 w-4 text-primary flex-shrink-0" />
@@ -151,14 +162,18 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                     ))}
                   </ul>
 
-                  <Button
-                    className="w-full"
-                    onClick={onContactClick}
-                    aria-label={`${t('services.cta.request')} – ${service.title}`}
-                  >
-                    {t('services.cta.request')}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  {/* Spacer + Button unten */}
+                  <div className="mt-auto pt-6">
+                    <Button
+                      className="inline-flex w-auto mx-auto whitespace-normal break-words leading-tight
+                                 text-sm px-3 py-2 rounded-md gap-2"
+                      onClick={onContactClick}
+                      aria-label={`${t('services.cta.request')} – ${service.title}`}
+                    >
+                      {t('services.cta.request')}
+                      <ArrowRight className="h-4 w-4 flex-shrink-0 hidden sm:inline" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -200,11 +215,11 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <div className="bg-card p-8 rounded-lg border max-w-2xl mx-auto">
+          <div className="bg-card p-8 rounded-lg border max-w-2xl mx-auto flex flex-col">
             <h3 className="text-xl font-semibold mb-2 text-foreground dark:text-white">
               {t('services.starter.title')}
             </h3>
-            <p className="text-muted-foreground mb-5">
+            <p className="text-muted-foreground">
               {t('services.starter.desc')}{' '}
               {STARTING_PRICE ? (
                 <span className="font-semibold text-foreground">
@@ -212,9 +227,17 @@ export default function ServicesSection({ onContactClick }: ServicesSectionProps
                 </span>
               ) : null}
             </p>
-            <Button size="lg" onClick={onContactClick} aria-label={t('services.starter.cta')}>
-              {t('services.starter.cta')}
-            </Button>
+
+            <div className="mt-auto pt-6">
+              <Button
+                className="inline-flex w-auto mx-auto text-sm px-3 py-2 rounded-md gap-2 leading-tight"
+                onClick={onContactClick}
+                aria-label={t('services.starter.cta')}
+              >
+                {t('services.starter.cta')}
+                <ArrowRight className="h-4 w-4 hidden sm:inline" />
+              </Button>
+            </div>
           </div>
         </motion.div>
       </div>

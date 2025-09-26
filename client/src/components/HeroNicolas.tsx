@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import clsx from 'clsx'
+import { useI18n } from '@/i18n'
+
 
 type Props = {
   variant?: 'accent' | 'clean'   // accent = more primary color
@@ -8,11 +10,13 @@ type Props = {
 }
 
 export default function HeroWordmark({
+   
   variant = 'accent',
-  tagline = 'Software engineer building fast, clean web apps and developer tooling.',
+  
 }: Props) {
   const isAccent = variant === 'accent'
-
+  const { t } = useI18n()
+  const tagline = t('gadner.tagline')
   return (
     <section
   className={clsx(
@@ -93,7 +97,7 @@ export default function HeroWordmark({
             )}
             onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
           >
-            Get in touch
+            {t('gadner.contact')}
           </Button>
 
           <Button
@@ -106,7 +110,7 @@ export default function HeroWordmark({
             )}
             onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
           >
-            See projects
+            {t('gadner.projects')}
           </Button>
         </div>
 

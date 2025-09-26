@@ -11,6 +11,9 @@ export const messages: Record<Lang, Record<string, string>> = {
     "nav.about": "Über mich",
     "nav.contact": "Kontakt",
 
+    "gadner.tagline": "Softwareentwickler für schnelle, saubere Web-Apps und Developer-Tools.",
+    "gadner.contact": "Kontaktiere mich",
+    "gadner.projects": "Projekte ansehen",
     "hero.badge": "Websites & Webapps — maßgeschneidert für Ihr Business",
     "hero.h1.leading": "Launchen Sie eine Seite, die ",
     "hero.h1.highlight": "Kund:innen gewinnt",
@@ -169,6 +172,10 @@ export const messages: Record<Lang, Record<string, string>> = {
     "nav.projects": "Projects",
     "nav.about": "About",
     "nav.contact": "Contact",
+
+    "gadner.tagline": "Software engineer building fast, clean web apps and developer tooling.",
+    "gadner.contact": "Contact me",
+    "gadner.projects": "View projects",
 
     "hero.badge": "Websites & Web Apps — tailored to your business",
     "hero.h1.leading": "Launch a site that ",

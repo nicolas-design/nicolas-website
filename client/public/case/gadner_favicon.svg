@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <!-- Weißer Kreis -->
+  <circle cx="128" cy="128" r="128" fill="#ffffff"/>
+  <!-- Schwarzer Text -->
+  <text
+    x="50%" y="52%" text-anchor="middle" dominant-baseline="middle"
+    font-family="Sora,Inter,system-ui,-apple-system,Segoe UI,Roboto"
+    font-size="160" font-weight="800" letter-spacing="-2"
+    fill="#000000"
+  >g.</text>
+</svg>
