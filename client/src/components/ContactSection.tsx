@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { insertContactMessageSchema } from '@shared/schema'
+import { buildInsertContactMessageSchema } from '@shared/schema';
 import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from '@/components/ui/form'
@@ -21,11 +22,15 @@ export default function ContactSection() {
   const { t } = useI18n()
   const { toast } = useToast()
 
-  const form = useForm<InsertContactMessage>({
-    resolver: zodResolver(insertContactMessageSchema),
-    defaultValues: { name: '', email: '', message: '' },
-    mode: 'onTouched',
-  })
+  const schema = buildInsertContactMessageSchema({
+    t: (key) => t(key), 
+    minMessage: 3,       // <- hier kannst du auch 1 setzen, wenn gewünscht
+  });
+
+  const form = useForm({
+    resolver: zodResolver(schema),
+    defaultValues: { name: '', email: '', message: '' }
+  });
 
   const handleSubmit = async (data: InsertContactMessage) => {
     try {

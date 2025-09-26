@@ -15,8 +15,8 @@ export default function Footer() {
  
 
   const socialLinks = [
-    { icon: Github,  label: 'GitHub',                         href: 'https://github.com',           testId: 'footer-github' },
-    { icon: Linkedin,label: 'LinkedIn',                       href: 'https://linkedin.com',         testId: 'footer-linkedin' },
+    //{ icon: Github,  label: 'GitHub',                         href: 'https://github.com',           testId: 'footer-github' },
+    //{ icon: Linkedin,label: 'LinkedIn',                       href: 'https://linkedin.com',         testId: 'footer-linkedin' },
     { icon: Mail,    label: t('contact.form.email.label'),    href: `mailto:${EMAIL}`,              testId: 'footer-email' },
   ]
 

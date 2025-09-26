@@ -164,6 +164,10 @@ export const messages: Record<Lang, Record<string, string>> = {
     "common.startingPrice.prefix": "Ab",
     "common.live": "Live",
     "common.guarantee.short": "30 Tage Geld-zurück",
+
+    "validation.name.min": "Name muss mindestens 2 Zeichen lang sein",
+  "validation.email": "Bitte gib eine gültige E-Mail-Adresse ein",
+  "validation.message.min": "Nachricht muss mindestens 3 Zeichen lang sein"
   },
 
   en: {
@@ -327,6 +331,10 @@ export const messages: Record<Lang, Record<string, string>> = {
     "common.startingPrice.prefix": "From",
     "common.live": "Live",
     "common.guarantee.short": "30-day money-back",
+
+    "validation.name.min": "Name must be at least 2 characters",
+  "validation.email": "Please enter a valid email address",
+  "validation.message.min": "Message must be at least 3 characters"
   },
 }
 
