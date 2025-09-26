@@ -34,13 +34,14 @@
     <script>
       (() => {
         try {
-          const saved = localStorage.getItem('theme');
+          const saved = localStorage.getItem('theme'); // 'dark' | 'light' | null
           const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          const isDark = saved ? saved === 'dark' : prefersDark;
+          const isDark = saved ? saved === 'dark' : prefersDark; // keep, but see tip below
           document.documentElement.classList.toggle('dark', isDark);
         } catch {}
       })();
-    </script>
+      </script>
+      
 
     <!-- 🔤 Sprach-Autodetect + Meta/Title setzen -->
     <script>
