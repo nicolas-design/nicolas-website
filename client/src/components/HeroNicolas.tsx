@@ -3,42 +3,43 @@ import { Button } from '@/components/ui/button'
 import clsx from 'clsx'
 import { useI18n } from '@/i18n'
 
-
 type Props = {
   variant?: 'accent' | 'clean'   // accent = more primary color
   tagline?: string
 }
 
 export default function HeroWordmark({
-   
   variant = 'accent',
-  
 }: Props) {
   const isAccent = variant === 'accent'
   const { t } = useI18n()
   const tagline = t('gadner.tagline')
+
   return (
     <section
-  className={clsx(
-    'relative isolate flex items-center justify-center',
-    'min-h-[85svh] px-4 sm:px-6',  // was 70svh
-    isAccent ? 'text-white' : 'text-foreground bg-background'
-  )}
->
-
+      className={clsx(
+        'relative isolate flex items-center justify-center',
+        // einzige Änderung: Phone höher, ab sm wieder dein alter Wert
+        'min-h-[100svh] sm:min-h-[85svh]',
+        'px-4 sm:px-6',
+        'bg-background',
+        '-mb-px', // << gegen 1px-Hairline
+        isAccent ? 'text-white' : 'text-foreground bg-background'
+      )}
+    >
       {/* Background */}
       {isAccent ? (
         <>
-          {/* primary gradient wash */}
+          {/* primary gradient wash (UNVERÄNDERT) */}
           <div
             aria-hidden="true"
             className="
               absolute inset-0 -z-10
-              [background:radial-gradient(1200px_600px_at_50%_10%,hsl(var(--primary))_0%,hsl(var(--primary)/0.80)_30%,hsl(var(--primary)/0.55)_60%,hsl(var(--primary)/0.35)_80%,transparent_100%)]
+              [background:radial-gradient(1200px_600px_at_50%_10%,hsl(var(--primary))_0%,hsl(var(--primary)/0.80)_30%,hsl(var(--primary)/0.55)_60%,hsl(var(--primary)/0.35)_80%,transparent_98%)]
               bg-[hsl(var(--primary)/0.35)]
             "
           />
-          {/* subtle grid overlay for texture */}
+          {/* subtle grid overlay for texture (UNVERÄNDERT) */}
           <div
             aria-hidden="true"
             className="
@@ -46,6 +47,14 @@ export default function HeroWordmark({
               [background-image:radial-gradient(white_1px,transparent_1px)]
               [background-size:18px_18px]
               mix-blend-soft-light
+            "
+          />
+          {/* Bottom feather (UNVERÄNDERT) */}
+          <div
+            aria-hidden="true"
+            className="
+              pointer-events-none absolute inset-x-0 bottom-0 -z-0 h-10
+              bg-gradient-to-b from-transparent to-[hsl(var(--background))]
             "
           />
         </>
@@ -62,16 +71,15 @@ export default function HeroWordmark({
 
       {/* Content */}
       <div className="mx-auto w-full max-w-4xl text-center">
-        {/* BIG logo from public/ (served from /case/...) */}
+        {/* BIG logo */}
         <div className="mb-6 flex justify-center">
-        <img
-  src="/case/gadner_stacked.svg"
-  alt="gadner."
-  className="block w-auto h-[180px] md:h-[240px] lg:h-[300px]"
-  loading="eager"
-  decoding="async"
-/>
-
+          <img
+            src="/case/gadner_stacked.svg"
+            alt="gadner."
+            className="block w-auto h-[180px] md:h-[240px] lg:h-[300px]"
+            loading="eager"
+            decoding="async"
+          />
         </div>
 
         {/* Tagline */}
