@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef, useLayoutEffect } from 'react'
 
 const ROTATE_MS = 6000
 
@@ -19,10 +19,10 @@ type Slide = {
 
 function PhoneMockup({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="flex justify-center p-4">
+    <div className="grid h-full w-full place-items-center p-4">
       <div
         className="
-          relative h-[420px] w-[208px] rounded-[2rem]
+          relative h-[90%] aspect-[208/420] rounded-[2rem]
           border border-slate-300 dark:border-slate-700/60
           bg-slate-900 dark:bg-slate-900
           shadow-[0_8px_40px_rgba(2,6,23,0.25)]
@@ -30,9 +30,9 @@ function PhoneMockup({ src, alt }: { src: string; alt: string }) {
         "
       >
         <div className="pointer-events-none absolute inset-0 rounded-[2rem] ring-1 ring-white/10" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 mt-1 h-5 w-28 rounded-b-2xl bg-black/80" />
+        <div className="absolute left-1/2 top-0 mt-1 h-5 w-28 -translate-x-1/2 rounded-b-2xl bg-black/80" />
         <div className="absolute inset-[10px] rounded-[1.6rem] overflow-hidden bg-black">
-          <img src={src} alt={alt} className="h-full w-full object-cover" loading="eager" decoding="async" />
+          <img src={src} alt={alt} className="block h-full w-full object-cover" loading="eager" decoding="async" />
         </div>
       </div>
     </div>
@@ -43,26 +43,17 @@ export default function Hero() {
   const { t } = useI18n()
   const [active, setActive] = useState<SlideKey>('websites')
 
-
-
   // Smooth scroll with offset for sticky header
   const smoothScroll = useCallback((targetId: string) => {
     const el = document.getElementById(targetId)
     if (!el) return
-
-    // Try to read a header height; fallback to 80px
     const header = document.getElementById('site-header')
-    const offset =
-      (header?.getBoundingClientRect().height ?? 80) +
-      8 // a tiny extra breathing space
-
-    const top =
-      el.getBoundingClientRect().top + window.pageYOffset - offset
-
+    const offset = (header?.getBoundingClientRect().height ?? 80) + 8
+    const top = el.getBoundingClientRect().top + window.pageYOffset - offset
     window.scrollTo({ top, behavior: 'smooth' })
   }, [])
 
-  // optional: react to hash in URL (direct visits / back button)
+  // react to URL hash
   useEffect(() => {
     const handler = () => {
       const id = location.hash.slice(1)
@@ -71,9 +62,8 @@ export default function Hero() {
     window.addEventListener('hashchange', handler)
     return () => window.removeEventListener('hashchange', handler)
   }, [smoothScroll])
-  
 
-  // Build localized slides
+  // Slides
   const SLIDES: Slide[] = useMemo(
     () => [
       {
@@ -82,11 +72,7 @@ export default function Hero() {
         img: '/case/monika-website.png',
         alt: t('slides.websites.label'),
         blurb: t('slides.websites.blurb'),
-        bullets: [
-          t('slides.websites.bullet.1'),
-          t('slides.websites.bullet.2'),
-          t('slides.websites.bullet.3'),
-        ],
+        bullets: [t('slides.websites.bullet.1'), t('slides.websites.bullet.2'), t('slides.websites.bullet.3')],
         kind: 'web',
       },
       {
@@ -95,11 +81,7 @@ export default function Hero() {
         img: '/case/brng.png',
         alt: t('slides.landing.label'),
         blurb: t('slides.landing.blurb'),
-        bullets: [
-          t('slides.landing.bullet.1'),
-          t('slides.landing.bullet.2'),
-          t('slides.landing.bullet.3'),
-        ],
+        bullets: [t('slides.landing.bullet.1'), t('slides.landing.bullet.2'), t('slides.landing.bullet.3')],
         kind: 'web',
       },
       {
@@ -108,11 +90,7 @@ export default function Hero() {
         img: '/case/orderboy.png',
         alt: t('slides.webapps.label'),
         blurb: t('slides.webapps.blurb'),
-        bullets: [
-          t('slides.webapps.bullet.1'),
-          t('slides.webapps.bullet.2'),
-          t('slides.webapps.bullet.3'),
-        ],
+        bullets: [t('slides.webapps.bullet.1'), t('slides.webapps.bullet.2'), t('slides.webapps.bullet.3')],
         kind: 'web',
       },
       {
@@ -121,46 +99,40 @@ export default function Hero() {
         img: '/case/brng-phone.png',
         alt: t('slides.mobile.label'),
         blurb: t('slides.mobile.blurb'),
-        bullets: [
-          t('slides.mobile.bullet.1'),
-          t('slides.mobile.bullet.2'),
-          t('slides.mobile.bullet.3'),
-        ],
+        bullets: [t('slides.mobile.bullet.1'), t('slides.mobile.bullet.2'), t('slides.mobile.bullet.3')],
         kind: 'app',
       },
     ],
     [t]
   )
 
+  // rotation
+  const prm = useMemo(() => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false, [])
+  const order = useMemo(() => SLIDES.map((s) => s.key), [SLIDES])
+  const timerRef = useRef<number | null>(null)
 
-// detect prefers-reduced-motion once
-const prm = useMemo(() => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false, [])
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      window.clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
+  }, [])
 
-const order = useMemo(() => SLIDES.map(s => s.key), [SLIDES])
-const timerRef = useRef<number | null>(null)
+  const scheduleNext = useCallback(() => {
+    clearTimer()
+    if (prm) return
+    timerRef.current = window.setTimeout(() => {
+      setActive((curr) => order[(order.indexOf(curr) + 1) % order.length])
+      scheduleNext()
+    }, ROTATE_MS)
+  }, [order, prm, clearTimer])
 
-const clearTimer = useCallback(() => {
-  if (timerRef.current) {
-    window.clearTimeout(timerRef.current)
-    timerRef.current = null
-  }
-}, [])
+  useEffect(() => {
+    scheduleNext()
+    return clearTimer
+  }, [scheduleNext, clearTimer])
 
-const scheduleNext = useCallback(() => {
-  clearTimer()
-  if (prm) return
-  timerRef.current = window.setTimeout(() => {
-    setActive(curr => order[(order.indexOf(curr) + 1) % order.length])
-    scheduleNext() // schedule again
-  }, ROTATE_MS)
-}, [order, prm, clearTimer])
-
-// start on mount, cleanup on unmount, rewire when order changes
-useEffect(() => {
-  scheduleNext()
-  return clearTimer
-}, [scheduleNext, clearTimer])
-
+  // Preload images
   useEffect(() => {
     SLIDES.forEach((s) => {
       const i = new Image()
@@ -168,10 +140,38 @@ useEffect(() => {
     })
   }, [SLIDES])
 
-  const slide = useMemo(
-    () => SLIDES.find((s) => s.key === active)!,
-    [active, SLIDES]
-  )
+  const slide = useMemo(() => SLIDES.find((s) => s.key === active)!, [active, SLIDES])
+
+  // ---- NEW: measure max body height offscreen and pin visible body ----
+  const [bodyMinPx, setBodyMinPx] = useState<number>(0)
+  const measRefs = useRef<Record<SlideKey, HTMLDivElement | null>>({
+    websites: null,
+    webapps: null,
+    landing: null,
+    mobile: null,
+  })
+
+  const recomputeBodyMin = useCallback(() => {
+    let maxH = 0
+    for (const k of Object.keys(measRefs.current) as SlideKey[]) {
+      const h = measRefs.current[k]?.offsetHeight ?? 0
+      if (h > maxH) maxH = h
+    }
+    // Add a tiny safety buffer
+    setBodyMinPx(Math.ceil(maxH + 1))
+  }, [])
+
+  // Recompute when slides/i18n change or viewport changes
+  useLayoutEffect(() => {
+    recomputeBodyMin()
+    const ro = new ResizeObserver(recomputeBodyMin)
+    Object.values(measRefs.current).forEach((el) => el && ro.observe(el))
+    window.addEventListener('resize', recomputeBodyMin)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', recomputeBodyMin)
+    }
+  }, [recomputeBodyMin, SLIDES])
 
   return (
     <section id="hero" className="relative overflow-hidden bg-background">
@@ -190,36 +190,25 @@ useEffect(() => {
             </span>
 
             <h1 className="mt-5 text-4xl font-semibold leading-tight text-slate-900 md:text-5xl dark:text-slate-100">
-              {t('hero.h1.leading')}
-              <span className="text-indigo-600 dark:text-indigo-400">
-                {t('hero.h1.highlight')}
-              </span>
+              {t('hero.h1.leading')}{' '}
+              <span className="text-indigo-600 dark:text-indigo-400">{t('hero.h1.highlight')}</span>
             </h1>
 
-            <p className="mt-4 max-w-xl text-slate-600 dark:text-slate-300">
-              {t('hero.p')}
-            </p>
+            <p className="mt-4 max-w-xl text-slate-600 dark:text-slate-300">{t('hero.p')}</p>
 
             <ul className="mt-6 grid max-w-xl gap-3 text-sm text-slate-700 dark:text-slate-300">
-              {[t('hero.bullet.1'), t('hero.bullet.2'), t('hero.bullet.3')].map(
-                (item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <svg
-                      className="mt-0.5 h-5 w-5 flex-none text-emerald-500"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.09 7.09a1 1 0 0 1-1.42.01L3.29 9.88a1 1 0 1 1 1.42-1.41l3.19 3.19 6.36-6.37a1 1 0 0 1 1.444 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span dangerouslySetInnerHTML={{ __html: item }} />
-                  </li>
-                )
-              )}
+              {[t('hero.bullet.1'), t('hero.bullet.2'), t('hero.bullet.3')].map((item) => (
+                <li key={item} className="flex items-start gap-3">
+                  <svg className="mt-0.5 h-5 w-5 flex-none text-emerald-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                    <path
+                      fillRule="evenodd"
+                      d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.09 7.09a1 1 0 0 1-1.42.01L3.29 9.88a1 1 0 1 1 1.42-1.41l3.19 3.19 6.36-6.37a1 1 0 0 1 1.444 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <span dangerouslySetInnerHTML={{ __html: item }} />
+                </li>
+              ))}
             </ul>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -252,21 +241,15 @@ useEffect(() => {
 
             <div className="mt-10 flex flex-wrap items-center gap-6 text-xs text-slate-500 dark:text-slate-400">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-700 dark:text-slate-200">
-                  {t('hero.stats.projects')}
-                </span>
+                <span className="font-semibold text-slate-700 dark:text-slate-200">{t('hero.stats.projects')}</span>
               </div>
               <div className="h-4 w-px bg-slate-200 dark:bg-slate-700/60" />
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-700 dark:text-slate-200">
-                  {t('hero.stats.duration')}
-                </span>
+                <span className="font-semibold text-slate-700 dark:text-slate-200">{t('hero.stats.duration')}</span>
               </div>
               <div className="h-4 w-px bg-slate-200 dark:bg-slate-700/60" />
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-slate-700 dark:text-slate-200">
-                  {t('hero.stats.vitals')}
-                </span>
+                <span className="font-semibold text-slate-700 dark:text-slate-200">{t('hero.stats.vitals')}</span>
               </div>
             </div>
           </div>
@@ -278,8 +261,10 @@ useEffect(() => {
               {SLIDES.map(({ key, label }) => (
                 <button
                   key={key}
-                  onClick={() => { setActive(key); scheduleNext(); }}
-
+                  onClick={() => {
+                    setActive(key)
+                    scheduleNext()
+                  }}
                   className={`
                     rounded-full px-3 py-1 text-xs font-medium ring-1 transition
                     ${
@@ -303,38 +288,40 @@ useEffect(() => {
                 dark:border-slate-700/60 dark:bg-slate-900/60
               "
             >
-              <button
-                type="button"
-                onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-                aria-label={`${slide.label} — ${t('hero.card.moreAria')}`}
-                className="block w-full text-left"
-              >
-                {slide.kind === 'app' ? (
-                  <PhoneMockup src={slide.img} alt={slide.alt} />
-                ) : (
-                  <img
-                    key={slide.img}
-                    src={slide.img}
-                    alt={slide.alt}
-                    className="h-64 w-full object-cover animate-fade"
-                    loading="eager"
-                    decoding="async"
-                  />
-                )}
-              </button>
+              {/* Media slot: constant height (no reflow) */}
+              <div className="relative w-full overflow-hidden h-[clamp(380px,60vw,520px)] md:h-64">
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+                  aria-label={`${slide.label} — ${t('hero.card.moreAria')}`}
+                  className="absolute inset-0 block h-full w-full text-left"
+                >
+                  {slide.kind === 'app' ? (
+                    <PhoneMockup src={slide.img} alt={slide.alt} />
+                  ) : (
+                    <img
+                      key={slide.img}
+                      src={slide.img}
+                      alt={slide.alt}
+                      className="block h-full w-full object-cover animate-fade"
+                      loading="eager"
+                      decoding="async"
+                      width={1200}
+                      height={800}
+                    />
+                  )}
+                </button>
+              </div>
 
-              <div className="p-4">
+              {/* Text body: pinned to the tallest measured slide */}
+              <div className="p-4" style={{ minHeight: bodyMinPx ? `${bodyMinPx}px` : undefined }}>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {slide.label}
-                  </h3>
+                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{slide.label}</h3>
                   <span className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     {t('hero.card.offer')}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-                  {slide.blurb}
-                </p>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{slide.blurb}</p>
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   {slide.bullets.map((b) => (
@@ -390,6 +377,33 @@ useEffect(() => {
             <p className="mx-auto mt-4 max-w-md text-center text-xs text-slate-500 md:text-right dark:text-slate-400">
               {t('hero.desc')}
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Hidden measuring rig (offscreen, no impact on layout) */}
+      <div aria-hidden className="absolute -left-[9999px] top-0 w-full">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto w-full max-w-md">
+            {SLIDES.map((s) => (
+              <div key={s.key} ref={(el) => (measRefs.current[s.key] = el)} className="p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold">{s.label}</h3>
+                  <span className="text-[10px] uppercase tracking-wide text-slate-500">{t('hero.card.offer')}</span>
+                </div>
+                <p className="mt-1 text-sm">{s.blurb}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {s.bullets.map((b) => (
+                    <span
+                      key={b}
+                      className="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ring-1"
+                      dangerouslySetInnerHTML={{ __html: b }}
+                    />
+                  ))}
+                </div>
+                <div className="mt-4 inline-flex items-center text-sm font-medium"> {t('hero.card.more')} </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
