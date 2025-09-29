@@ -53,6 +53,8 @@ export default function Hero() {
     window.scrollTo({ top, behavior: 'smooth' })
   }, [])
 
+  
+
   // react to URL hash
   useEffect(() => {
     const handler = () => {
@@ -139,6 +141,13 @@ export default function Hero() {
       i.src = s.img
     })
   }, [SLIDES])
+
+  // put near other callbacks
+const userSelect = useCallback((key: SlideKey) => {
+  setActive(key)
+  scheduleNext()   // clear + restart rotation
+}, [scheduleNext])
+
 
   const slide = useMemo(() => SLIDES.find((s) => s.key === active)!, [active, SLIDES])
 
@@ -261,10 +270,7 @@ export default function Hero() {
               {SLIDES.map(({ key, label }) => (
                 <button
                   key={key}
-                  onClick={() => {
-                    setActive(key)
-                    scheduleNext()
-                  }}
+                  onClick={() => userSelect(key)}
                   className={`
                     rounded-full px-3 py-1 text-xs font-medium ring-1 transition
                     ${
@@ -339,6 +345,7 @@ export default function Hero() {
 
                 <button
                   type="button"
+                  
                   onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
                   className="mt-4 inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
                   aria-label={t('hero.card.more')}
@@ -360,7 +367,7 @@ export default function Hero() {
                   <button
                     key={s.key}
                     aria-label={`${s.label} ${t('hero.card.moreAria')}`}
-                    onClick={() => setActive(s.key)}
+                    onClick={() => userSelect(s.key)}
                     className={`
                       h-1.5 w-6 rounded-full transition
                       ${
