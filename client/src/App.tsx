@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Portfolio from "@/pages/Portfolio";
 import NotFound from "@/pages/not-found";
 import { I18nProvider } from "./i18n";
+import { useStableViewport } from "./lib/useStableViewport";
 
 function Router() {
   return (
@@ -18,11 +19,12 @@ function Router() {
 }
 
 function App() {
+  useStableViewport(); 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         {/* Site-wide wrapper */}
-        <div className="min-h-dvh bg-background text-foreground font-sans antialiased">
+        <div className="min-h-fluid bg-background text-foreground font-sans antialiased">
         <I18nProvider>
           <Toaster />
           <Router />
