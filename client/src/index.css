@@ -145,3 +145,22 @@ html, body { overflow-x: hidden; }
   }
   .hover-elevate:hover::after { background-color: var(--elevate-1); }
 }
+
+/* 1) Stable viewport height utilities (fallback + modern) */
+:root { --vh: 1vh; }           /* fallback for old Safari */
+.h-fluid     { height: calc(var(--vh, 1vh) * 100); }
+.min-h-fluid { min-height: calc(var(--vh, 1vh) * 100); }
+
+@supports (height: 100svh) {
+  .h-fluid     { height: 100svh; }      /* small viewport: ignores URL bar changes */
+  .min-h-fluid { min-height: 100svh; }
+  .h-fluid-dvh { height: 100dvh; }      /* dynamic viewport: true fullscreen (modals) */
+  .h-fluid-lvh { height: 100lvh; }      /* large viewport: includes hidden bars */
+}
+
+/* 2) Prevent scroll-anchoring “nudges” on key sections */
+.no-anchor { overflow-anchor: none; }
+
+/* 3) Nice-to-have: safe-area padding helpers */
+.pad-safe-b { padding-bottom: env(safe-area-inset-bottom); }
+.pad-safe-t { padding-top:    env(safe-area-inset-top);    }
