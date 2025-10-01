@@ -5,7 +5,7 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 // vite.config.ts – falls noch nicht vorhanden:
 import svgr from 'vite-plugin-svgr'
 
-
+const LAN_IP = process.env.VITE_LAN_IP || undefined
 
 export default defineConfig({
   plugins: [          
@@ -34,9 +34,12 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
-    },
+    host: true,            // <= IMPORTANT: listen on 0.0.0.0 (LAN)
+    port: 5173,
+    strictPort: true,
+    fs: { strict: true, deny: ["**/.*"] },
+    hmr: LAN_IP
+      ? { host: LAN_IP, protocol: "ws", port: 5173 }
+      : undefined,
   },
 });
