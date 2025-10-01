@@ -64,8 +64,8 @@ export default function ContactSection() {
       icon: Mail,
       // nutzt vorhandenen Form-Label-Key für "E-Mail"
       title: t('contact.form.email.label'),
-      value: 'gadnernicolas@gmail.com',
-      link: 'mailto:gadnernicolas@gmail.com',
+      value: 'nicolas@gadner.dev',
+      link: 'mailto:nicolas@gadner.dev',
     },
     {
       icon: Phone,

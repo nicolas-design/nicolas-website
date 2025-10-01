@@ -10,7 +10,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   // Werte ggf. aus ENV/Config ziehen
-  const EMAIL = 'gadnernicolas@gmail.com'
+  const EMAIL = 'nicolas@gadner.dev'
   const PHONE = '+43 678 1227369'
  
 
