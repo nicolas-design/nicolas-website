@@ -1,7 +1,7 @@
 // client/src/components/ContactSection.tsx
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useSyncExternalStore, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -21,16 +21,31 @@ import { useI18n } from '@/i18n'
 // Cal.com Embed
 import Cal, { getCalApi } from '@calcom/embed-react'
 
-  const isDarkMode = () => document.documentElement.classList.contains('dark')
-  const calBrandingFor = (dark: boolean) => ({
-    // adjust to your tokens
-    brandColor: '#6558F5',            // your primary
-    textColor:  dark ? '#E5E7EB' : '#0F172A',
-    backgroundColor: dark ? '#0B1220' : '#FFFFFF', // fixes the white “outsides”
-  })
+/* ---------------------------------
+ * Dark-mode subscription (html.dark)
+ * --------------------------------*/
+function useHtmlDark(): boolean {
+  const subscribe = (cb: () => void) => {
+    const obs = new MutationObserver(cb)
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => obs.disconnect()
+  }
+  const getSnapshot = () => document.documentElement.classList.contains('dark')
+  const getServerSnapshot = () => false
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+}
+
+// Optional: only keep if you want to tint the popup background/text via embed
+const calBrandingFor = (dark: boolean) => ({
+  brandColor: '#6558F5',              // your primary
+  textColor: dark ? '#E5E7EB' : '#0F172A',
+  backgroundColor: dark ? '#0B1220' : '#FFFFFF',
+})
+
 export default function ContactSection() {
   const { t } = useI18n()
   const { toast } = useToast()
+  const dark = useHtmlDark()
 
   const schema = buildInsertContactMessageSchema({
     t: (key) => t(key),
@@ -43,36 +58,29 @@ export default function ContactSection() {
   })
 
   // Cal link (prefer ENV)
-
-
-
   const rawCal = import.meta.env.VITE_CALL_LINK as string | undefined
   const calLink = (typeof rawCal === 'string' && rawCal.trim()) ? rawCal.trim() : 'test'
 
+  // Theme-keyed namespace prevents Cal from reusing stale UI
+  const ns = useMemo(() => `contact-${dark ? 'dark' : 'light'}`, [dark])
 
-  // Init Cal UI once
+  // Re-apply UI whenever theme/namespace flips, and preload so first open is fresh
   useEffect(() => {
-    (async () => {
-      const cal = await getCalApi({ namespace: 'contact' })
-      const dark = isDarkMode()
-      cal('ui', {
-        theme: dark ? 'dark' : 'light',
-        layout: 'month_view',
-        styles: { branding: calBrandingFor(dark) },
+    let cancelled = false
+    const id = setTimeout(() => {
+      getCalApi({ namespace: ns }).then((cal) => {
+        if (cancelled) return
+        cal('ui', {
+          theme: dark ? 'dark' : 'light',
+          layout: 'month_view',
+          // If you want Cal dashboard to own colors, remove "styles" below.
+          styles: { branding: calBrandingFor(dark) },
+        })
+        cal('preload', { calLink })
       })
-    })()
-  }, [])
-
-  // React to dark-mode toggles
-  useEffect(() => {
-    const html = document.documentElement
-    const obs = new MutationObserver(async () => {
-      const cal = await getCalApi({ namespace: 'contact' })
-      cal('ui', { theme: isDarkMode() ? 'dark' : 'light' })
-    })
-    obs.observe(html, { attributes: true, attributeFilter: ['class'] })
-    return () => obs.disconnect()
-  }, [])
+    }, 0)
+    return () => { cancelled = true; clearTimeout(id) }
+  }, [ns, dark, calLink])
 
   const handleSubmit = async (data: InsertContactMessage) => {
     try {
@@ -153,7 +161,6 @@ export default function ContactSection() {
           </p>
         </motion.div>
 
-        
         <div className="grid gap-12 lg:grid-cols-2">
           {/* Form */}
           <motion.div
@@ -246,8 +253,6 @@ export default function ContactSection() {
                       )}
                     </Button>
 
-                    
-
                     <p className="text-xs text-muted-foreground text-center">
                       {t('contact.legal.note')}
                     </p>
@@ -256,15 +261,18 @@ export default function ContactSection() {
               </CardContent>
             </Card>
           </motion.div>
-                       {/* MOBILE CTA directly under header */}
-        <BookingCTA
-          className="mb-12 lg:hidden"
-          calLink={calLink}
-          name={name}
-          email={email}
-          notes={notes}
-          t={t}
-        />
+
+          {/* MOBILE CTA directly under header */}
+          <BookingCTA
+            className="mb-12 lg:hidden"
+            ns={ns}
+            calLink={calLink}
+            name={name}
+            email={email}
+            notes={notes}
+            t={t}
+          />
+
           {/* Contact info + DESKTOP sticky CTA */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
@@ -306,6 +314,7 @@ export default function ContactSection() {
               {/* Desktop sticky CTA */}
               <div className="hidden lg:block lg:sticky lg:top-24">
                 <BookingCTA
+                  ns={ns}
                   calLink={calLink}
                   name={name}
                   email={email}
@@ -318,19 +327,14 @@ export default function ContactSection() {
         </div>
       </div>
 
-      {/* Invisible Cal iframe */}
+      {/* Hidden Cal iframe — remount and re-namespaced per theme */}
       <Cal
-        namespace="contact"
+        key={ns}
+        namespace={ns}
         calLink={calLink}
-        config={{ theme: isDarkMode() ? 'dark' : 'light', layout: 'month_view' }}
-        style={{
-          position: 'fixed',
-          width: 0,
-          height: 0,
-          border: 0,
-          opacity: 0,
-          pointerEvents: 'none',
-        }}
+        // You can omit config since we call cal('ui', …) above, but keeping it is fine:
+        // config={{ theme: dark ? 'dark' : 'light', layout: 'month_view' }}
+        style={{ position: 'fixed', width: 0, height: 0, border: 0, opacity: 0, pointerEvents: 'none' }}
       />
     </section>
   )
@@ -342,6 +346,7 @@ export default function ContactSection() {
 
 function BookingCTA({
   className = '',
+  ns,
   calLink,
   name,
   email,
@@ -349,23 +354,26 @@ function BookingCTA({
   t,
 }: {
   className?: string
+  ns: string
   calLink: string
   name?: string
   email?: string
   notes?: string
   t: (k: string) => string
 }) {
+  // IMPORTANT: don't include theme/styles here so global cal('ui', …) config wins
+  const calConfig = useMemo(() => ({
+    name: name || undefined,
+    email: email || undefined,
+    notes: notes || undefined,
+    layout: 'month_view',
+  }), [name, email, notes])
+
   return (
     <Card className={`bg-card ${className}`}>
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
-          <div className="
-            flex h-10 w-10 items-center justify-center rounded-lg
-            bg-primary/10 ring-1 ring-primary/20
-            dark:bg-white/10 dark:ring-white/15
-          ">
-            <Video className="h-5 w-5 text-primary" />
-          </div>
+         
 
           <div className="flex-1">
             <h4 className="font-semibold mb-1 text-foreground">
@@ -384,16 +392,9 @@ function BookingCTA({
 
             <Button
               type="button"
-              data-cal-namespace="contact"
+              data-cal-namespace={ns}
               data-cal-link={calLink}
-              data-cal-config={JSON.stringify({
-                name: name || undefined,
-                email: email || undefined,
-                notes: notes || undefined,
-                layout: 'month_view',
-                theme: isDarkMode() ? 'dark' : 'light',
-                styles: { branding: calBrandingFor(isDarkMode()) },
-              })}
+              data-cal-config={JSON.stringify(calConfig)}
               className="w-full"
             >
               <Video className="mr-2 h-4 w-4" />
@@ -406,13 +407,15 @@ function BookingCTA({
   )
 }
 
-function InlineBookButton({
+export function InlineBookButton({
+  ns,
   calLink,
   name,
   email,
   notes,
   label = 'Book a 15-min video call',
 }: {
+  ns: string
   calLink: string
   name?: string
   email?: string
@@ -423,7 +426,7 @@ function InlineBookButton({
     <Button
       type="button"
       variant="outline"
-      data-cal-namespace="contact"
+      data-cal-namespace={ns}
       data-cal-link={calLink}
       data-cal-config={JSON.stringify({
         name: name || undefined,
