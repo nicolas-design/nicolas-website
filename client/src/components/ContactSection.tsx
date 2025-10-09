@@ -1,36 +1,78 @@
 // client/src/components/ContactSection.tsx
 'use client'
 
+import { useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Mail, Phone, MapPin, Send } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, Video } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useToast } from '@/hooks/use-toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { insertContactMessageSchema } from '@shared/schema'
-import { buildInsertContactMessageSchema } from '@shared/schema';
+import { buildInsertContactMessageSchema } from '@shared/schema'
 import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from '@/components/ui/form'
 import type { InsertContactMessage } from '@shared/schema'
 import { useI18n } from '@/i18n'
 
+// Cal.com Embed
+import Cal, { getCalApi } from '@calcom/embed-react'
+
+  const isDarkMode = () => document.documentElement.classList.contains('dark')
+  const calBrandingFor = (dark: boolean) => ({
+    // adjust to your tokens
+    brandColor: '#6558F5',            // your primary
+    textColor:  dark ? '#E5E7EB' : '#0F172A',
+    backgroundColor: dark ? '#0B1220' : '#FFFFFF', // fixes the white “outsides”
+  })
 export default function ContactSection() {
   const { t } = useI18n()
   const { toast } = useToast()
 
   const schema = buildInsertContactMessageSchema({
-    t: (key) => t(key), 
-    minMessage: 3,       // <- hier kannst du auch 1 setzen, wenn gewünscht
-  });
+    t: (key) => t(key),
+    minMessage: 3,
+  })
 
-  const form = useForm({
+  const form = useForm<InsertContactMessage>({
     resolver: zodResolver(schema),
     defaultValues: { name: '', email: '', message: '' }
-  });
+  })
+
+  // Cal link (prefer ENV)
+
+
+
+  const rawCal = import.meta.env.VITE_CALL_LINK as string | undefined
+  const calLink = (typeof rawCal === 'string' && rawCal.trim()) ? rawCal.trim() : 'test'
+
+
+  // Init Cal UI once
+  useEffect(() => {
+    (async () => {
+      const cal = await getCalApi({ namespace: 'contact' })
+      const dark = isDarkMode()
+      cal('ui', {
+        theme: dark ? 'dark' : 'light',
+        layout: 'month_view',
+        styles: { branding: calBrandingFor(dark) },
+      })
+    })()
+  }, [])
+
+  // React to dark-mode toggles
+  useEffect(() => {
+    const html = document.documentElement
+    const obs = new MutationObserver(async () => {
+      const cal = await getCalApi({ namespace: 'contact' })
+      cal('ui', { theme: isDarkMode() ? 'dark' : 'light' })
+    })
+    obs.observe(html, { attributes: true, attributeFilter: ['class'] })
+    return () => obs.disconnect()
+  }, [])
 
   const handleSubmit = async (data: InsertContactMessage) => {
     try {
@@ -52,8 +94,7 @@ export default function ContactSection() {
     } catch (err) {
       toast({
         title: t('contact.form.toastr.err.title'),
-        description:
-          err instanceof Error ? err.message : t('contact.form.toastr.err.desc'),
+        description: err instanceof Error ? err.message : t('contact.form.toastr.err.desc'),
         variant: 'destructive',
       })
     }
@@ -62,29 +103,31 @@ export default function ContactSection() {
   const contactInfo = [
     {
       icon: Mail,
-      // nutzt vorhandenen Form-Label-Key für "E-Mail"
       title: t('contact.form.email.label'),
       value: 'nicolas@gadner.dev',
       link: 'mailto:nicolas@gadner.dev',
     },
     {
       icon: Phone,
-      // kein Key vorhanden -> vorerst hartkodiert (kann ich gern ergänzen)
       title: t('contact.info.phone'),
       value: '+43 678 1227369',
       link: 'tel:+436781227369',
     },
     {
       icon: MapPin,
-      // kein Key vorhanden -> vorerst hartkodiert (kann ich gern ergänzen)
       title: t('contact.info.location'),
       value: t('contact.info.location2'),
       link: null,
     },
   ] as const
 
+  // Live values for Cal config
+  const name = form.watch('name')
+  const email = form.watch('email')
+  const notes = form.watch('message')
+
   return (
-    <section id="contact" className="py-24 bg-white dark:bg-[hsl(222_15%_12%)] dark:to-[hsl(222_15%_11%)] border-t">
+    <section id="contact" className="py-24 bg-white dark:bg-[hsl(222_15%_12%)] border-t">
       <div className="mx-auto max-w-6xl px-6">
         {/* Header */}
         <motion.div
@@ -92,9 +135,9 @@ export default function ContactSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-14"
+          className="text-center mb-8"
         >
-           <span className="
+          <span className="
             inline-flex items-center gap-2 rounded-full mb-4
             bg-primary/10 px-3 py-1 text-xs font-medium text-primary ring-1 ring-primary/20
             dark:bg-primary/20 dark:text-primary dark:ring-primary/30
@@ -110,8 +153,9 @@ export default function ContactSection() {
           </p>
         </motion.div>
 
+        
         <div className="grid gap-12 lg:grid-cols-2">
-          {/* Formular */}
+          {/* Form */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -184,6 +228,7 @@ export default function ContactSection() {
                       )}
                     />
 
+                    {/* Primary submit */}
                     <Button
                       type="submit"
                       className="w-full"
@@ -201,6 +246,8 @@ export default function ContactSection() {
                       )}
                     </Button>
 
+                    
+
                     <p className="text-xs text-muted-foreground text-center">
                       {t('contact.legal.note')}
                     </p>
@@ -209,8 +256,16 @@ export default function ContactSection() {
               </CardContent>
             </Card>
           </motion.div>
-
-          {/* Kontaktinfos */}
+                       {/* MOBILE CTA directly under header */}
+        <BookingCTA
+          className="mb-12 lg:hidden"
+          calLink={calLink}
+          name={name}
+          email={email}
+          notes={notes}
+          t={t}
+        />
+          {/* Contact info + DESKTOP sticky CTA */}
           <motion.div
             initial={{ opacity: 0, x: 24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -248,24 +303,138 @@ export default function ContactSection() {
                 </div>
               </div>
 
-              <Card className="bg-card">
-                <CardContent className="p-6">
-                  <h4 className="font-semibold mb-3 text-foreground">{t('contact.response.title')}</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {t('contact.response.desc')}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                    <span className="text-sm text-emerald-600 dark:text-emerald-400">
-                      {t('contact.response.available')}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Desktop sticky CTA */}
+              <div className="hidden lg:block lg:sticky lg:top-24">
+                <BookingCTA
+                  calLink={calLink}
+                  name={name}
+                  email={email}
+                  notes={notes}
+                  t={t}
+                />
+              </div>
             </div>
           </motion.div>
         </div>
       </div>
+
+      {/* Invisible Cal iframe */}
+      <Cal
+        namespace="contact"
+        calLink={calLink}
+        config={{ theme: isDarkMode() ? 'dark' : 'light', layout: 'month_view' }}
+        style={{
+          position: 'fixed',
+          width: 0,
+          height: 0,
+          border: 0,
+          opacity: 0,
+          pointerEvents: 'none',
+        }}
+      />
     </section>
+  )
+}
+
+/* ---------------------------
+ * Reusable CTA components
+ * --------------------------*/
+
+function BookingCTA({
+  className = '',
+  calLink,
+  name,
+  email,
+  notes,
+  t,
+}: {
+  className?: string
+  calLink: string
+  name?: string
+  email?: string
+  notes?: string
+  t: (k: string) => string
+}) {
+  return (
+    <Card className={`bg-card ${className}`}>
+      <CardContent className="p-6">
+        <div className="flex items-start gap-4">
+          <div className="
+            flex h-10 w-10 items-center justify-center rounded-lg
+            bg-primary/10 ring-1 ring-primary/20
+            dark:bg-white/10 dark:ring-white/15
+          ">
+            <Video className="h-5 w-5 text-primary" />
+          </div>
+
+          <div className="flex-1">
+            <h4 className="font-semibold mb-1 text-foreground">
+              {t('contact.response.title')}
+            </h4>
+            <p className="text-sm text-muted-foreground mb-3">
+              {t('contact.response.desc')}
+            </p>
+
+            <div className="flex items-center gap-2 mb-4">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              <span className="text-sm text-emerald-600 dark:text-emerald-400">
+                {t('contact.response.available')}
+              </span>
+            </div>
+
+            <Button
+              type="button"
+              data-cal-namespace="contact"
+              data-cal-link={calLink}
+              data-cal-config={JSON.stringify({
+                name: name || undefined,
+                email: email || undefined,
+                notes: notes || undefined,
+                layout: 'month_view',
+                theme: isDarkMode() ? 'dark' : 'light',
+                styles: { branding: calBrandingFor(isDarkMode()) },
+              })}
+              className="w-full"
+            >
+              <Video className="mr-2 h-4 w-4" />
+              {t('contact.response.cta') || 'Jetzt Video-Call buchen'}
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function InlineBookButton({
+  calLink,
+  name,
+  email,
+  notes,
+  label = 'Book a 15-min video call',
+}: {
+  calLink: string
+  name?: string
+  email?: string
+  notes?: string
+  label?: string
+}) {
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      data-cal-namespace="contact"
+      data-cal-link={calLink}
+      data-cal-config={JSON.stringify({
+        name: name || undefined,
+        email: email || undefined,
+        notes: notes || undefined,
+        layout: 'month_view',
+      })}
+      className="mt-2"
+    >
+      <Video className="mr-2 h-4 w-4" />
+      {label}
+    </Button>
   )
 }

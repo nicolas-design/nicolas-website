@@ -152,6 +152,8 @@ export const messages: Record<Lang, Record<string, string>> = {
 "contact.info.location": "Standort",
 "contact.info.location2": "Wien, Österreich",
 "contact.contact": "Kontakt",
+'contact.response.cta': "Jetzt Video Call buchen",
+'contact.response.inlineCta' : "Jetzt Video Call buchen",
 
     "footer.brand": "Nicolas Gadner",
     "footer.desc": "Software Developer mit Leidenschaft für moderne, benutzerfreundliche digitale Lösungen.",
@@ -319,6 +321,8 @@ export const messages: Record<Lang, Record<string, string>> = {
 "contact.info.location": "Location",
 "contact.info.location2": "Vienna, Austria",
 "contact.contact": "Contact",
+'contact.response.cta': "Book a video call now",
+'contact.response.inlineCta' : "Book a video call now",
 
     "footer.brand": "Nicolas Gadner",
     "footer.desc": "Software developer with a passion for modern, user-friendly digital products.",
