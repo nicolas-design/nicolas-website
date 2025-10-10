@@ -53,7 +53,6 @@ export default function Hero() {
     window.scrollTo({ top, behavior: 'smooth' })
   }, [])
 
-  
 
   // react to URL hash
   useEffect(() => {
@@ -159,7 +158,7 @@ const userSelect = useCallback((key: SlideKey) => {
     landing: null,
     mobile: null,
   })
-
+ 
   const recomputeBodyMin = useCallback(() => {
     let maxH = 0
     for (const k of Object.keys(measRefs.current) as SlideKey[]) {
@@ -397,7 +396,10 @@ const userSelect = useCallback((key: SlideKey) => {
         <div className="mx-auto max-w-7xl px-6">
           <div className="mx-auto w-full max-w-md">
             {SLIDES.map((s) => (
-              <div key={s.key} ref={(el) => (measRefs.current[s.key] = el)} className="p-4">
+              <div key={s.key} 
+              ref={(el) => {
+                measRefs.current[s.key] = el // or: el ?? null
+              }} className="p-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-semibold">{s.label}</h3>
                   <span className="text-[10px] uppercase tracking-wide text-slate-500">{t('hero.card.offer')}</span>
