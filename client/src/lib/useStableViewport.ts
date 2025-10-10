@@ -1,38 +1,47 @@
 // client/src/lib/useStableViewport.ts
-import { useEffect } from "react";
-
-function setVHVar() {
-  const vh = (window.visualViewport?.height ?? window.innerHeight) * 0.01;
-  document.documentElement.style.setProperty("--vh", `${vh}px`);
-}
+import { useEffect } from 'react'
 
 export function useStableViewport() {
   useEffect(() => {
-    // guard for SSR
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return
 
-    let raf = 0;
-    const onResize = () => setVHVar();
-    const onScroll = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(setVHVar);
-    };
+    let lockedVh = 0
 
-    // initial
-    setVHVar();
+    const measure = () => (window.visualViewport?.height ?? window.innerHeight) * 0.01
 
-    // listeners (cover all mobile cases)
-    window.addEventListener("resize", onResize);
-    window.addEventListener("orientationchange", onResize);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.visualViewport?.addEventListener("resize", onResize);
+    const set = (v: number) => {
+      document.documentElement.style.setProperty('--vh', `${v}px`)
+    }
+
+    const init = () => {
+      lockedVh = measure()
+      set(lockedVh)
+    }
+
+    const onVVResize = () => {
+      const now = measure()
+      // Only update when change is big enough (e.g., rotation / true UI change)
+      if (Math.abs(now - lockedVh) >= 4) { // ~>= 40px on a 1000px tall screen
+        lockedVh = now
+        set(lockedVh)
+      }
+    }
+
+    const onOrientation = () => {
+      // reset lock on orientation change
+      lockedVh = 0
+      init()
+    }
+
+    init()
+
+    // Listen to visualViewport only; avoid window 'scroll' or window 'resize'
+    window.visualViewport?.addEventListener('resize', onVVResize, { passive: true })
+    window.addEventListener('orientationchange', onOrientation, { passive: true })
 
     return () => {
-      if (raf) cancelAnimationFrame(raf);
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("orientationchange", onResize);
-      window.removeEventListener("scroll", onScroll);
-      window.visualViewport?.removeEventListener("resize", onResize);
-    };
-  }, []);
+      window.visualViewport?.removeEventListener('resize', onVVResize as any)
+      window.removeEventListener('orientationchange', onOrientation)
+    }
+  }, [])
 }

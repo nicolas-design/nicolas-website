@@ -183,7 +183,11 @@ const userSelect = useCallback((key: SlideKey) => {
   }, [recomputeBodyMin, SLIDES])
 
   return (
-    <section id="hero" className="relative overflow-hidden bg-background">
+    <section id="hero" className="   relative overflow-hidden bg-background
+    min-h-screen
+    supports-[height:100svh]:min-h-[100svh]
+    md:supports-[height:100dvh]:min-h-[100dvh]
+    flex items-center">
       <div className="relative z-10 mx-auto max-w-7xl px-6 pt-20 pb-16 md:pt-28 md:pb-20">
         <div className="grid items-center gap-12 md:grid-cols-2">
           {/* Left */}

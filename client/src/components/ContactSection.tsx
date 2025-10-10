@@ -82,6 +82,9 @@ export default function ContactSection() {
     return () => { cancelled = true; clearTimeout(id) }
   }, [ns, dark, calLink])
 
+
+  
+  
   const handleSubmit = async (data: InsertContactMessage) => {
     try {
       const res = await fetch('/api/contact', {

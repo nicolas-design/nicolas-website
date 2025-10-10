@@ -20,7 +20,7 @@ export default function HeroWordmark({
       className={clsx(
         'relative isolate flex items-center justify-center',
         // einzige Änderung: Phone höher, ab sm wieder dein alter Wert
-        'min-h-[100svh] sm:min-h-[85svh]',
+        '  min-h-[calc(var(--vh,1vh)*100)]',
         'px-4 sm:px-6',
         'bg-background',
         '-mb-px', // << gegen 1px-Hairline

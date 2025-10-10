@@ -10,6 +10,10 @@ export default {
         md: ".375rem", /* 6px */
         sm: ".1875rem", /* 3px */
       },
+      minHeight: {
+        'screen-svh': '100svh',
+        'screen-dvh': '100dvh',
+      },
       colors: {
         // Flat / base colors (regular buttons)
         background: "hsl(var(--background) / <alpha-value>)",

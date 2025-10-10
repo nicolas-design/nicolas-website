@@ -164,3 +164,4 @@ html, body { overflow-x: hidden; }
 /* 3) Nice-to-have: safe-area padding helpers */
 .pad-safe-b { padding-bottom: env(safe-area-inset-bottom); }
 .pad-safe-t { padding-top:    env(safe-area-inset-top);    }
+
