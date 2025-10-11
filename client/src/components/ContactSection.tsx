@@ -36,11 +36,19 @@ function useHtmlDark(): boolean {
 }
 
 // Optional: only keep if you want to tint the popup background/text via embed
-const calBrandingFor = (dark: boolean) => ({
-  brandColor: '#6558F5',              // your primary
-  textColor: dark ? '#E5E7EB' : '#0F172A',
-  backgroundColor: dark ? '#0B1220' : '#FFFFFF',
-})
+const calCssVarsPerTheme = {
+  light: {
+    '--cal-brand': '#6558F5',
+    '--cal-text': '#0F172A',
+    '--cal-bg': '#FFFFFF',
+  },
+  dark: {
+    '--cal-brand': '#A78BFA',
+    '--cal-text': '#E5E7EB',
+    '--cal-bg': '#0B1220',
+  },
+} as const
+
 
 export default function ContactSection() {
   const { t } = useI18n()
@@ -74,7 +82,7 @@ export default function ContactSection() {
           theme: dark ? 'dark' : 'light',
           layout: 'month_view',
           // If you want Cal dashboard to own colors, remove "styles" below.
-          styles: { branding: calBrandingFor(dark) },
+          cssVarsPerTheme: calCssVarsPerTheme,
         })
         cal('preload', { calLink })
       })
